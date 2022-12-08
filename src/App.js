@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import styled from "styled-components";
+import Header from "./components/Header";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import MyDiary from "./pages/MyDiary";
+import Home from "./pages/Home";
+import Routine from "./pages/Routine";
+import Friends from "./pages/Friends";
+
+const Background = styled.div`
+  background-color: ${(props) => props.theme.light0};
+  height: 100vh;
+`;
 
 function App() {
+  const [userInfo, setUserInfo] = useState();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Background>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route exact path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/my-diary" element={<MyDiary />} />
+          <Route path="/routine" element={<Routine />} />
+          <Route path="/friends" element={<Friends />} />
+        </Routes>
+      </BrowserRouter>
+    </Background>
   );
 }
 
