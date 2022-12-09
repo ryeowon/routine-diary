@@ -16,11 +16,15 @@ const Background = styled.div`
 `;
 
 function App() {
-  const [userInfo, setUserInfo] = useState();
+  const [userInfo, setUserInfo] = useState({
+    username: "ryeowon",
+  });
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
   return (
     <Background>
       <BrowserRouter>
-        <Header />
+        <Header isLoggedIn={isLoggedIn} userInfo={userInfo} />
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

@@ -5,6 +5,7 @@ const theme = {
   dark0: "#F0DBDB",
   dark1: "#DBA39A",
   dark2: "#CE7777",
+  wrapper_padding: "100px",
 };
 
 export default theme;
