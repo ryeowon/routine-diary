@@ -22,19 +22,26 @@ const CalendarContainer = styled.div`
     background-color: ${(props) => props.theme.light1};
     border-radius: 5px;
     padding: 5px 7px;
+    box-shadow: ${(props) => props.theme.small_shadow};
   }
   .react-calendar__month-view__days {
     border-radius: 5px;
     background-color: ${(props) => props.theme.light1};
     margin-top: 3px;
+    box-shadow: ${(props) => props.theme.small_shadow};
   }
   .react-calendar__tile {
     background-color: transparent;
     border-radius: 10px;
+
+    &:hover {
+      background-color: ${(props) => props.theme.dark1};
+    }
   }
 
   .react-calendar__tile--range {
     background-color: ${(props) => props.theme.dark1};
+    box-shadow: ${(props) => props.theme.small_shadow};
   }
 `;
 

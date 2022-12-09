@@ -67,7 +67,6 @@ const Register = styled(Link)`
   text-align: center;
   font-family: "Raleway", "Courier New", monospace;
   box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px 0px;
-  transition: all 0.4s ease;
 
   &:hover {
     background-color: ${(props) => props.theme.dark2};
@@ -112,7 +111,7 @@ const Header = ({ isLoggedIn, userInfo }) => {
 
       {isLoggedIn ? (
         <RightComponent>
-          <span class="material-symbols-outlined">account_circle</span>
+          <span className="material-symbols-outlined">account_circle</span>
           &nbsp;&nbsp;Hello, {userInfo.username}!
         </RightComponent>
       ) : (
