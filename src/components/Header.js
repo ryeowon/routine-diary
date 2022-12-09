@@ -1,14 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 const Wrapper = styled.div`
-  box-shadow: 0px 5px 10px ${(props) => props.theme.light1};
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  box-shadow: ${(props) => props.theme.small_shadow};
   height: 30px;
   padding: 10px 7vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: ${(props) => props.theme.light1};
+  opacity: 0.9;
+  border-bottom: 1px solid lightgray;
 `;
 
 const Title = styled(Link)`
@@ -23,6 +31,7 @@ const Title = styled(Link)`
 `;
 
 const RightComponent = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
 `;
@@ -86,24 +95,48 @@ const Tab = styled(Link)`
   display: block;
   transition: all 0.4s ease;
   text-decoration: none;
-  color: black;
+  color: ${(props) => (props.active ? (props) => props.theme.dark2 : "black")};
   padding: 5px 2vw;
   &:hover {
     color: ${(props) => props.theme.dark2};
   }
 `;
 
-const Header = ({ isLoggedIn, userInfo }) => {
+const Header = ({ isLoggedIn, userInfo, currentTab }) => {
+  const [isActive, setIsActive] = useState({
+    routine: true,
+    diary: false,
+    friends: false,
+  });
+
+  useEffect(() => {
+    if (currentTab === "routine")
+      setIsActive({ routine: true, diary: false, friends: false });
+    else if (currentTab === "my-diary")
+      setIsActive({ routine: false, diary: true, friends: false });
+    else if (currentTab === "friends")
+      setIsActive({ routine: false, diary: false, friends: true });
+  }, [currentTab]);
+
   return (
     <Wrapper>
       <Title to="/">
-        <span className="material-symbols-outlined">date_range</span>
+        <span className="material-symbols-outlined">edit_calendar</span>
         <span>&nbsp;Routine Diary</span>
       </Title>
       {isLoggedIn ? (
         <CenterComponent>
-          <Tab to="/routine">Routine</Tab> | <Tab to="/my-diary">My Diary</Tab>|
-          <Tab to="/friends">Friends</Tab>
+          <Tab to="/routine" active={isActive.routine}>
+            Routine
+          </Tab>
+          |
+          <Tab to="/my-diary" active={isActive.diary}>
+            My Diary
+          </Tab>
+          |
+          <Tab to="/friends" active={isActive.friends}>
+            Friends
+          </Tab>
         </CenterComponent>
       ) : (
         <></>

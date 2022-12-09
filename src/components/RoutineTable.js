@@ -4,28 +4,70 @@ import styled from "styled-components";
 
 // css for components in Routine.js
 const Wrapper = styled.div`
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
+  //justify-content: center;
   padding: 20px 0;
 `;
 
 const InputDate = styled.input`
   cursor: pointer;
   font-size: 15px;
+  display: block;
+  height: 30px;
+  padding: 0 10px;
+  box-shadow: ${(props) => props.theme.small_shadow};
+  border: 1px solid rgba(34, 36, 38, 0.15);
+  border-radius: 10px;
 `;
 
-const Table = styled.div``;
+const Table = styled.div`
+  margin-top: 20px;
+`;
 
 const Row = styled.div`
+  width: 40vw;
+  min-width: 400px;
   display: grid;
-  grid-template-columns: 1fr 6fr 1fr;
+  grid-template-columns: 6fr 1fr;
+  background-color: ${(props) => props.theme.light1};
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+  padding-left: 48px;
+  box-shadow: ${(props) => props.theme.small_shadow};
+  border-bottom: 1px solid rgba(34, 36, 38, 0.15);
 `;
 
-const RowNum = styled.div``;
+const RowNum = styled.div`
+  border-radius: 10px;
+  background-color: ${(props) => props.theme.dark1};
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  height: 100%;
+  width: 40px;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 const RoutineName = styled.div``;
-const RoutineCheck = styled.div``;
+const RoutineCheck = styled.div`
+  //background-color: ${(props) => props.theme.dark0};
+  border-left: 2px solid rgba(34, 36, 38, 0.15);
+  font-weight: bold;
+  position: absolute;
+  height: 100%;
+  width: 40px;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const CheckLabel = styled.span`
+  font-weight: bold;
+`;
 //end of css
 
 const RoutineTable = () => {
@@ -48,8 +90,17 @@ const RoutineTable = () => {
   ]);
   return (
     <Wrapper>
-      <InputDate type="date" value={date} />
+      <div>
+        <InputDate type="date" value={date} />
+      </div>
       <Table>
+        <Row>
+          <RowNum>1</RowNum>
+          <RoutineName>Drink water in the morning</RoutineName>
+          <RoutineCheck>
+            <CheckLabel className="material-symbols-outlined">done</CheckLabel>
+          </RoutineCheck>
+        </Row>
         <Row>
           <RowNum>1</RowNum>
           <RoutineName>Drink water in the morning</RoutineName>

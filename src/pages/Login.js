@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   width: 100%;
   margin: 0 auto;
   display: flex;
-  padding: 50px 0;
+  padding: 100px 0;
   justify-content: center;
 `;
 

@@ -11,13 +11,18 @@ const Wrapper = styled.div`
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
-  padding: 50px ${(props) => props.theme.wrapper_padding};
+  padding: 100px ${(props) => props.theme.wrapper_padding};
   //justify-content: center;
 `;
 
-const Friends = () => {
+const Friends = ({ setCurrentTab }) => {
   const [date, setDate] = useState(new Date());
   const [modal, setModal] = useState(false);
+
+  useEffect(() => {
+    setCurrentTab("friends");
+  });
+
   return (
     <Wrapper>
       <MyCalander date={date} setDate={setDate} />

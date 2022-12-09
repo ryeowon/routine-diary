@@ -9,6 +9,7 @@ import MyDiary from "./pages/MyDiary";
 import Home from "./pages/Home";
 import Routine from "./pages/Routine";
 import Friends from "./pages/Friends";
+import { fireStore } from "./firebase";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.light0};
@@ -19,19 +20,35 @@ function App() {
   const [userInfo, setUserInfo] = useState({
     username: "ryeowon",
   });
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentTab, setCurrentTab] = useState("routine");
+  useEffect(() => {
+    console.log(fireStore);
+  });
   return (
     <Background>
       <BrowserRouter>
-        <Header isLoggedIn={isLoggedIn} userInfo={userInfo} />
+        <Header
+          isLoggedIn={isLoggedIn}
+          userInfo={userInfo}
+          currentTab={currentTab}
+        />
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/my-diary" element={<MyDiary />} />
-          <Route path="/routine" element={<Routine />} />
-          <Route path="/friends" element={<Friends />} />
+          <Route
+            path="/my-diary"
+            element={<MyDiary setCurrentTab={setCurrentTab} />}
+          />
+          <Route
+            path="/routine"
+            element={<Routine setCurrentTab={setCurrentTab} />}
+          />
+          <Route
+            path="/friends"
+            element={<Friends setCurrentTab={setCurrentTab} />}
+          />
         </Routes>
       </BrowserRouter>
     </Background>

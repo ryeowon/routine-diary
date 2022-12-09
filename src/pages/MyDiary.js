@@ -9,12 +9,17 @@ const Wrapper = styled.div`
   width: 100%;
   margin: 0 auto;
   display: flex;
-  padding: 50px 0;
+  padding: 100px 0;
   justify-content: center;
 `;
 
-const MyDiary = () => {
+const MyDiary = ({ setCurrentTab }) => {
   const [date, setDate] = useState(new Date());
+
+  useEffect(() => {
+    setCurrentTab("my-diary");
+  });
+
   return (
     <Wrapper>
       <Calander date={date} setDate={setDate} />

@@ -58,8 +58,7 @@ const SearchBtn = styled.button`
   background-color: ${(props) => props.theme.dark1};
   transition: all 0.4s ease;
 
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px 0px,
-    rgba(0, 0, 0, 0.23) 0px 3px 6px 0px;
+  box-shadow: ${(props) => props.theme.btn_shadow};
 
   &:hover {
     background-color: ${(props) => props.theme.dark2};
