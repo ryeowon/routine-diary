@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  query,
+  equalTo,
+  orderByChild,
+} from "firebase/database";
 
 // css for components in Register.js
 const Wrapper = styled.div`
@@ -78,20 +87,20 @@ const ErrorMessage = styled.div`
 // End of css
 
 // register page
-const Login = () => {
+const Login = ({ setUserInfo, setIsLoggedIn }) => {
   // state variables
   const [isValid, setIsValid] = useState({
-    email: false,
+    id: false,
     password: false,
   });
 
   const [loginInfo, setLoginInfo] = useState({
-    email: "",
+    id: "",
     password: "",
   });
 
   const [errorMsg, setErrorMsg] = useState({
-    email: "",
+    id: "",
     password: "",
   });
 
@@ -101,7 +110,7 @@ const Login = () => {
   useEffect(() => {
     console.log(isValid);
     // if all input values are valid, set isAllValid to true and enable the register button.
-    if (isValid.email && isValid.password) {
+    if (isValid.id && isValid.password) {
       console.log("true");
       setIsAllValid(true);
     } else {
@@ -112,21 +121,19 @@ const Login = () => {
 
   // function to check if the input values are valid.
   const onInputChange = (e) => {
-    if (e.target.name === "email") {
-      let reg =
-        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-      let email = e.target.value;
-
-      if (reg.test(email)) {
-        isValid.email = true;
+    if (e.target.name === "id") {
+      // check id
+      let id = e.target.value;
+      if (!id.match(/[!?@#$%^&*():;+\-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]/)) {
+        isValid.id = true;
+        loginInfo.id = id;
         setErrorMsg((prevState) => {
-          return { ...prevState, email: "" };
+          return { ...prevState, id: "" };
         });
       } else {
-        isValid.email = false;
+        loginInfo.id = "";
         setErrorMsg((prevState) => {
-          return { ...prevState, email: "*Your email is invalid." };
+          return { ...prevState, id: "*You cannot use special characters." };
         });
       }
     } else if (e.target.name === "password") {
@@ -153,7 +160,32 @@ const Login = () => {
   };
   const navigate = useNavigate();
   const onBtnClick = () => {
-    navigate("/routine");
+    const db = getDatabase();
+    const idRef = query(ref(db, "/users"), orderByChild("id"));
+
+    const userRef = query(idRef, equalTo(loginInfo.id));
+
+    // if email is unique, save account information to database.
+    // if not, show error message.
+    onValue(
+      userRef,
+      (snapshot) => {
+        console.log("snapshot val", snapshot.val());
+        if (snapshot.val()) {
+          console.log(snapshot.val());
+          setUserInfo(snapshot.val()[loginInfo.id]);
+          setIsLoggedIn(true);
+          navigate("/routine");
+        } else {
+          setErrorMsg((prevState) => {
+            return { ...prevState, password: "*No matching information" };
+          });
+        }
+      },
+      {
+        onlyOnce: true,
+      }
+    );
   };
 
   return (
@@ -161,12 +193,12 @@ const Login = () => {
       <Container>
         <Title>Login</Title>
         <div>
-          Don't have an account? <Link to="/login">Register</Link>
+          Don't have an account? <Link to="/register">Register</Link>
         </div>
         <InputWrapper>
-          <div>Email</div>
-          <Input name="email" type="email" onChange={onInputChange} />
-          <ErrorMessage>{errorMsg.email}</ErrorMessage>
+          <div>ID</div>
+          <Input name="id" type="id" onChange={onInputChange} />
+          <ErrorMessage>{errorMsg.id}</ErrorMessage>
         </InputWrapper>
         <InputWrapper>
           <div>Password</div>

@@ -35,7 +35,12 @@ function App() {
         />
         <Routes>
           <Route exact path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={
+              <Login setUserInfo={setUserInfo} setIsLoggedIn={setIsLoggedIn} />
+            }
+          />
           <Route path="/register" element={<Register />} />
           <Route
             path="/my-diary"

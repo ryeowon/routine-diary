@@ -1,13 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { fireStore } from "../firebase";
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  query,
+  equalTo,
+  orderByChild,
+} from "firebase/database";
 
 // css for components in Register.js
 const Wrapper = styled.div`
   width: 100%;
   margin: 0 auto;
   display: flex;
-  padding: 50px 0;
+  padding: 100px 0;
   justify-content: center;
 `;
 
@@ -82,43 +92,44 @@ const Register = () => {
   // state variables
   const [isValid, setIsValid] = useState({
     username: false,
-    email: false,
+    id: false,
     password: false,
     password_confirmation: false,
   });
 
   const [accountInfo, setAccountInfo] = useState({
     username: "",
-    email: "",
+    id: "",
     password: "",
     password_confirmation: "",
   });
 
   const [errorMsg, setErrorMsg] = useState({
     username: "",
-    email: "",
+    id: "",
     password: "",
     password_confirmation: "",
   });
+  const [isUnique, setIsUnique] = useState(true);
 
   const [isAllValid, setIsAllValid] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
 
   useEffect(() => {
-    console.log(isValid);
+    //console.log(isValid);
     // if all input values are valid, set isAllValid to true and enable the register button.
     if (
       isValid.username &&
-      isValid.email &&
+      isValid.id &&
       isValid.password &&
       isValid.password_confirmation
     ) {
-      console.log("true");
+      //console.log("true");
       setIsAllValid(true);
     } else {
       setIsAllValid(false);
     }
-    console.log("a");
+    //console.log("a");
   }, [errorMsg]);
 
   // function to check if the input values are valid.
@@ -136,23 +147,21 @@ const Register = () => {
           return { ...prevState, name: "*Please enter your name." };
         });
       }
-    } else if (e.target.name === "email") {
-      isValid.email = false;
-      let email = e.target.value;
-      let reg =
-        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    } else if (e.target.name === "id") {
+      isValid.id = false;
+      let id = e.target.value;
 
-      // check email
-      if (reg.test(email)) {
-        isValid.email = true;
-        accountInfo.email = email;
+      // check id
+      if (!id.match(/[!?@#$%^&*():;+\-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]/)) {
+        isValid.id = true;
+        accountInfo.id = id;
         setErrorMsg((prevState) => {
-          return { ...prevState, email: "" };
+          return { ...prevState, id: "" };
         });
       } else {
-        accountInfo.email = "";
+        accountInfo.id = "";
         setErrorMsg((prevState) => {
-          return { ...prevState, email: "*Your email is invalid." };
+          return { ...prevState, id: "*You cannot use special characters." };
         });
       }
     } else if (e.target.name === "password") {
@@ -250,8 +259,38 @@ const Register = () => {
     //console.log(errorMsg);
   };
 
+  useEffect(() => {
+    //checkidDuplicate();
+  });
+
   const onBtnClick = () => {
-    setIsCreated(true);
+    const db = getDatabase();
+    const idRef = query(ref(db, "/users"), orderByChild("id"));
+
+    const userRef = query(idRef, equalTo(accountInfo.id));
+
+    // if email is unique, save account information to database.
+    // if not, show error message.
+    onValue(
+      userRef,
+      (snapshot) => {
+        console.log("snapshot val", snapshot.val());
+        if (snapshot.val()) {
+          setErrorMsg((prevState) => {
+            return { ...prevState, id: "*Your id is duplicated." };
+          });
+        } else {
+          console.log("success");
+          setIsCreated(true);
+          set(ref(db, "users/" + accountInfo.id), accountInfo);
+        }
+      },
+      {
+        onlyOnce: true,
+      }
+    );
+
+    //console.log(accountInfo);
   };
 
   const navigate = useNavigate();
@@ -270,9 +309,9 @@ const Register = () => {
             <ErrorMessage>{errorMsg.name}</ErrorMessage>
           </InputWrapper>
           <InputWrapper>
-            <div>Email</div>
-            <Input name="email" type="email" onChange={onInputChange} />
-            <ErrorMessage>{errorMsg.email}</ErrorMessage>
+            <div>ID</div>
+            <Input name="id" type="id" onChange={onInputChange} />
+            <ErrorMessage>{errorMsg.id}</ErrorMessage>
           </InputWrapper>
           <InputWrapper>
             <div>Password</div>

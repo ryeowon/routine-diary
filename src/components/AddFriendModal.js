@@ -126,7 +126,7 @@ const RequestBtn = styled.div`
 `;
 
 const AddFriendModal = ({ setModal }) => {
-  const [email, setEmail] = useState("");
+  const [id, setId] = useState("");
   const [friendInfo, setFriendInfo] = useState(null);
   const [isSearched, setIsSearched] = useState(false);
   const [isRequested, setIsRequested] = useState(false);
@@ -136,7 +136,7 @@ const AddFriendModal = ({ setModal }) => {
   };
 
   const onInputChange = (e) => {
-    setEmail(e.target.value);
+    setId(e.target.value);
   };
 
   const onSearchClick = (e) => {
@@ -157,7 +157,7 @@ const AddFriendModal = ({ setModal }) => {
           close
         </CloseBtn>
         <Title>Add New Friends</Title>
-        <Input placeholder="Enter friend's email" onChange={onInputChange} />
+        <Input placeholder="Enter friend's ID" onChange={onInputChange} />
         <SearchBtn onClick={onSearchClick}>Search</SearchBtn>
         <FriendContainer>
           {!isSearched && !friendInfo ? <>Press the search button.</> : <></>}
