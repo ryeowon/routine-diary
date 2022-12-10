@@ -109,19 +109,22 @@ const FriendsDiary = ({ date, userInfo }) => {
     setIsDiaryExist(false);
     //setDiaryList({});
 
-    friend_list.forEach((friend_id) => {
+    friend_list.forEach((friend_id, idx) => {
       const userRef = query(idRef, equalTo(friend_id));
       onValue(
         userRef,
         (snapshot) => {
           //console.log("FriendsDiary.js", snapshot.val());
           let diaryInfo = snapshot.val()[friend_id].diary[dateLabel];
-          console.log(friend_id, diaryInfo);
+          //console.log(friend_id, diaryInfo);
           if (diaryInfo) {
             temp_list[friend_id] = diaryInfo;
-            //setDiaryList((prev) => temp_list);
+
             console.log("templist", temp_list);
-            setDiaryList((prev) => temp_list);
+
+            if (idx + 1 === Object.entries(userInfo.friends).length) {
+              setDiaryList((prev) => temp_list);
+            }
           }
         },
         {

@@ -24,6 +24,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 99;
 `;
 
 const Modal = styled.div`
@@ -35,6 +36,7 @@ const Modal = styled.div`
   background-color: ${(props) => props.theme.light1};
   border-radius: 10px;
   box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
+  z-index: 100;
 `;
 
 const Title = styled.div`

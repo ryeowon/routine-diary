@@ -14,7 +14,9 @@ const Wrapper = styled.div`
 `;
 
 const Routine = ({ setCurrentTab, isLoggedIn, userInfo, setUserInfo }) => {
-  const [isNew, setisNew] = useState(true);
+  const [routineNum, setRoutineNum] = useState("new");
+  const [isEdit, setIsEdit] = useState(false);
+  const [routineList, setRoutineList] = useState({});
 
   useEffect(() => {
     setCurrentTab("routine");
@@ -34,12 +36,24 @@ const Routine = ({ setCurrentTab, isLoggedIn, userInfo, setUserInfo }) => {
 
   return (
     <Wrapper>
-      <RoutineTable userInfo={userInfo} />
-      <RoutineEditor
-        isNew={isNew}
+      <RoutineTable
         userInfo={userInfo}
         setUserInfo={setUserInfo}
+        setIsEdit={setIsEdit}
+        setRoutineNum={setRoutineNum}
+        routineList={routineList}
+        setRoutineList={setRoutineList}
       />
+      {isEdit ? (
+        <RoutineEditor
+          routineNum={routineNum}
+          userInfo={userInfo}
+          setUserInfo={setUserInfo}
+          setIsEdit={setIsEdit}
+          routineList={routineList}
+          setRoutineList={setRoutineList}
+        />
+      ) : null}
     </Wrapper>
   );
 };

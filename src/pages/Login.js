@@ -108,7 +108,7 @@ const Login = ({ setUserInfo, setIsLoggedIn }) => {
   const [isCreated, setIsCreated] = useState(false);
 
   useEffect(() => {
-    console.log(isValid);
+    //console.log(isValid);
     // if all input values are valid, set isAllValid to true and enable the register button.
     if (isValid.id && isValid.password) {
       console.log("true");
@@ -116,7 +116,7 @@ const Login = ({ setUserInfo, setIsLoggedIn }) => {
     } else {
       setIsAllValid(false);
     }
-    console.log(isValid);
+    //console.log(isValid);
   }, [errorMsg]);
 
   // function to check if the input values are valid.
@@ -170,9 +170,9 @@ const Login = ({ setUserInfo, setIsLoggedIn }) => {
     onValue(
       userRef,
       (snapshot) => {
-        console.log("snapshot val", snapshot.val());
+        //console.log("snapshot val", snapshot.val());
         if (snapshot.val()) {
-          console.log(snapshot.val());
+          //console.log(snapshot.val());
           setUserInfo(snapshot.val()[loginInfo.id]);
           setIsLoggedIn(true);
           navigate("/routine");
