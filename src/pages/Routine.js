@@ -13,12 +13,24 @@ const Wrapper = styled.div`
   padding: 80px ${(props) => props.theme.wrapper_padding};
 `;
 
-const Routine = ({ setCurrentTab }) => {
+const Routine = ({ setCurrentTab, isLoggedIn }) => {
   const [isNew, setisNew] = useState(true);
 
   useEffect(() => {
     setCurrentTab("routine");
   });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      return navigate("/");
+    }
+  }, []);
+
+  if (!isLoggedIn) {
+    return <></>;
+  }
 
   return (
     <Wrapper>

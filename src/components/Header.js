@@ -120,10 +120,18 @@ const Header = ({ isLoggedIn, userInfo, currentTab }) => {
 
   return (
     <Wrapper>
-      <Title to="/">
-        <span className="material-symbols-outlined">edit_calendar</span>
-        <span>&nbsp;Routine Diary</span>
-      </Title>
+      {isLoggedIn ? (
+        <Title to="/routine">
+          <span className="material-symbols-outlined">edit_calendar</span>
+          <span>&nbsp;Routine Diary</span>
+        </Title>
+      ) : (
+        <Title to="/">
+          <span className="material-symbols-outlined">edit_calendar</span>
+          <span>&nbsp;Routine Diary</span>
+        </Title>
+      )}
+
       {isLoggedIn ? (
         <CenterComponent>
           <Tab to="/routine" active={isActive.routine}>

@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import styled from "styled-components";
 import Header from "./components/Header";
 import Login from "./pages/Login";
@@ -10,6 +10,14 @@ import Home from "./pages/Home";
 import Routine from "./pages/Routine";
 import Friends from "./pages/Friends";
 import { fireStore } from "./firebase";
+import {
+  equalTo,
+  getDatabase,
+  onValue,
+  orderByChild,
+  query,
+  ref,
+} from "firebase/database";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.light0};
@@ -17,14 +25,36 @@ const Background = styled.div`
 `;
 
 function App() {
-  const [userInfo, setUserInfo] = useState({
-    username: "ryeowon",
-  });
+  const [userInfo, setUserInfo] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentTab, setCurrentTab] = useState("routine");
+
   useEffect(() => {
-    console.log(fireStore);
-  });
+    if (isLoggedIn) {
+      const db = getDatabase();
+      const idRef = query(ref(db, "/users"), orderByChild("id"));
+
+      let id = userInfo.id;
+
+      const userRef = query(idRef, equalTo(id));
+
+      onValue(
+        userRef,
+        (snapshot) => {
+          console.log("App.js", snapshot.val());
+          if (snapshot.val()) {
+            setUserInfo(snapshot.val()[id]);
+          } else {
+            setUserInfo(null);
+          }
+        },
+        {
+          onlyOnce: true,
+        }
+      );
+    }
+  }, []);
+
   return (
     <Background>
       <BrowserRouter>
@@ -42,18 +72,39 @@ function App() {
             }
           />
           <Route path="/register" element={<Register />} />
+
           <Route
             path="/my-diary"
-            element={<MyDiary setCurrentTab={setCurrentTab} />}
+            element={
+              <MyDiary
+                setCurrentTab={setCurrentTab}
+                userInfo={userInfo}
+                isLoggedIn={isLoggedIn}
+              />
+            }
           />
           <Route
             path="/routine"
-            element={<Routine setCurrentTab={setCurrentTab} />}
+            element={
+              <Routine
+                setCurrentTab={setCurrentTab}
+                userInfo={userInfo}
+                isLoggedIn={isLoggedIn}
+              />
+            }
           />
           <Route
             path="/friends"
-            element={<Friends setCurrentTab={setCurrentTab} />}
+            element={
+              <Friends
+                setCurrentTab={setCurrentTab}
+                userInfo={userInfo}
+                setUserInfo={setUserInfo}
+                isLoggedIn={isLoggedIn}
+              />
+            }
           />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </Background>

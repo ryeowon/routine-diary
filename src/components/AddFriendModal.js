@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  query,
+  equalTo,
+  orderByChild,
+  push,
+  child,
+  update,
+} from "firebase/database";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -125,7 +137,7 @@ const RequestBtn = styled.div`
   }
 `;
 
-const AddFriendModal = ({ setModal }) => {
+const AddFriendModal = ({ setModal, userInfo }) => {
   const [id, setId] = useState("");
   const [friendInfo, setFriendInfo] = useState(null);
   const [isSearched, setIsSearched] = useState(false);
@@ -140,13 +152,41 @@ const AddFriendModal = ({ setModal }) => {
   };
 
   const onSearchClick = (e) => {
+    if (id === userInfo.id) return;
     // search friend and set corresponding information
-    setFriendInfo(false);
+    const db = getDatabase();
+    const idRef = query(ref(db, "/users"), orderByChild("id"));
+
+    const userRef = query(idRef, equalTo(id));
+
+    onValue(
+      userRef,
+      (snapshot) => {
+        console.log("snapshot val", snapshot.val());
+        if (snapshot.val()) {
+          setFriendInfo(snapshot.val()[id]);
+        } else {
+          setFriendInfo(null);
+        }
+      },
+      {
+        onlyOnce: true,
+      }
+    );
+
     setIsSearched(true);
     setIsRequested(false);
   };
 
   const onRequestClick = () => {
+    const db = getDatabase();
+
+    const updates = {};
+    updates["/users/" + id + "/friend_requests/" + userInfo.id] =
+      userInfo.username;
+    console.log(updates);
+    update(ref(db), updates);
+    //set(ref(db, "users/" + id + "/friend_requests"), accountInfo);
     setIsRequested(true);
   };
 
@@ -166,7 +206,8 @@ const AddFriendModal = ({ setModal }) => {
             <div>
               <Friend>
                 <FriendName>
-                  <span className="material-symbols-outlined">person</span>Name
+                  <span className="material-symbols-outlined">person</span>
+                  {friendInfo.username}
                 </FriendName>
                 <RequestBtn onClick={onRequestClick}>
                   <span className="material-symbols-outlined">person_add</span>

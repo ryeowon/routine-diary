@@ -126,12 +126,13 @@ const RoutineEditor = ({ isNew }) => {
               <CycleContainer>
                 <Day>Me</Day>
                 <Day>
-                  <span class="material-symbols-outlined">person_add</span>
+                  <span className="material-symbols-outlined">person_add</span>
                 </Day>
               </CycleContainer>
             </InputWrapper>
             <InputWrapper>
               <Button>Save</Button>
+              <Button>Cancel</Button>
             </InputWrapper>
           </Container>
         </Wrapper>
@@ -160,7 +161,7 @@ const RoutineEditor = ({ isNew }) => {
               <CycleContainer>
                 <Day>Me</Day>
                 <Day>
-                  <span class="material-symbols-outlined">person_add</span>
+                  <span className="material-symbols-outlined">person_add</span>
                 </Day>
               </CycleContainer>
             </InputWrapper>

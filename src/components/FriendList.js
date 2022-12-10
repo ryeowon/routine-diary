@@ -1,3 +1,13 @@
+import {
+  getDatabase,
+  onValue,
+  query,
+  ref,
+  orderByChild,
+  equalTo,
+  set,
+  update,
+} from "firebase/database";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -96,13 +106,171 @@ const SubTitle = styled.div`
   margin-bottom: 3px;
 `;
 
-const FriendList = ({ setModal }) => {
-  const [friendInfo, setFriendInfo] = useState("null");
-  const [friendRequest, setFriendRequest] = useState(true);
+const FriendList = ({ setModal, userInfo, setUserInfo }) => {
+  const [friendInfo, setFriendInfo] = useState(false);
+  const [friendRequest, setFriendRequest] = useState(false);
+
+  const [RequestComponent, setRequestComponent] = useState(<></>);
+  const [friendComponent, setFriendComponent] = useState(<></>);
 
   const showModal = () => {
     setModal(true);
   };
+
+  const onConfirm = (friend_id, friend_name) => {
+    const db = getDatabase();
+
+    // delete the friend request.
+    set(
+      ref(db, "users/" + userInfo.id + "/friend_requests/" + friend_id),
+      null
+    );
+
+    // update the friend list
+    const updates = {};
+    updates["/users/" + userInfo.id + "/friends/" + friend_id] = friend_name;
+    updates["/users/" + friend_id + "/friends/" + userInfo.id] =
+      userInfo.username;
+    update(ref(db), updates);
+
+    // load user information again.
+    const idRef = query(ref(db, "/users"), orderByChild("id"));
+    let id = userInfo.id;
+    const userRef = query(idRef, equalTo(id));
+
+    onValue(
+      userRef,
+      (snapshot) => {
+        console.log("Friend.js", snapshot.val());
+        if (snapshot.val()) {
+          setUserInfo(snapshot.val()[id]);
+        } else {
+          setUserInfo(null);
+        }
+      },
+      {
+        onlyOnce: true,
+      }
+    );
+
+    console.log("confirm");
+  };
+
+  const onReject = (friend_id) => {
+    const db = getDatabase();
+
+    // delete the friend request.
+    set(
+      ref(db, "users/" + userInfo.id + "/friend_requests/" + friend_id),
+      null
+    );
+
+    // load user information again.
+    const idRef = query(ref(db, "/users"), orderByChild("id"));
+    let id = userInfo.id;
+    const userRef = query(idRef, equalTo(id));
+
+    onValue(
+      userRef,
+      (snapshot) => {
+        console.log("Friend.js", snapshot.val());
+        if (snapshot.val()) {
+          setUserInfo(snapshot.val()[id]);
+        } else {
+          setUserInfo(null);
+        }
+      },
+      {
+        onlyOnce: true,
+      }
+    );
+
+    console.log("reject");
+  };
+
+  const onRemove = (friend_id) => {
+    const db = getDatabase();
+
+    // delete the friend.
+    set(ref(db, "users/" + userInfo.id + "/friends/" + friend_id), null);
+
+    set(ref(db, "users/" + friend_id + "/friends/" + userInfo.id), null);
+
+    // load user information again.
+    const idRef = query(ref(db, "/users"), orderByChild("id"));
+    let id = userInfo.id;
+    const userRef = query(idRef, equalTo(id));
+
+    onValue(
+      userRef,
+      (snapshot) => {
+        console.log("Friend.js", snapshot.val());
+        if (snapshot.val()) {
+          setUserInfo(snapshot.val()[id]);
+        } else {
+          setUserInfo(null);
+        }
+      },
+      {
+        onlyOnce: true,
+      }
+    );
+  };
+
+  useEffect(() => {
+    // whenever user information is updated, render friend requests and friend list.
+    let friend_requests = userInfo.friend_requests;
+    console.log(friend_requests);
+
+    if (friend_requests) {
+      setFriendRequest(true);
+      const component = Object.entries(friend_requests).map(
+        (friend_info, idx) => {
+          return (
+            <FriendRequest>
+              <span className="material-symbols-outlined">person</span>
+              {friend_info[1]}
+              <ConfirmBtn
+                onClick={() => onConfirm(friend_info[0], friend_info[1])}
+              >
+                <span className="material-symbols-outlined">check</span>
+              </ConfirmBtn>
+              <RemoveBtn onClick={() => onReject(friend_info[0])}>
+                <span className="material-symbols-outlined">close</span>
+              </RemoveBtn>
+            </FriendRequest>
+          );
+        }
+      );
+
+      setRequestComponent(component);
+    } else {
+      setFriendRequest(false);
+    }
+
+    let friend_list = userInfo.friends;
+    console.log(friend_list);
+
+    if (friend_list) {
+      setFriendInfo(true);
+
+      const component = Object.entries(friend_list).map((friend_info, idx) => {
+        return (
+          <Friend>
+            <span className="material-symbols-outlined">person</span>
+            {friend_info[1]}
+            <RemoveBtn onClick={() => onRemove(friend_info[0])}>
+              <span className="material-symbols-outlined">close</span>
+            </RemoveBtn>
+          </Friend>
+        );
+      });
+
+      setFriendComponent(component);
+
+      /* */
+    }
+  }, [userInfo]);
 
   return (
     <Wrapper>
@@ -113,42 +281,25 @@ const FriendList = ({ setModal }) => {
         </AddButton>
       </Title>
 
-      {friendInfo ? (
-        <List>
-          {friendRequest ? (
-            <FriendRequestContainer>
-              <SubTitle>Friend Requests</SubTitle>
-              <FriendRequest>
-                <span className="material-symbols-outlined">person</span>
-                Name
-                <ConfirmBtn>
-                  <span className="material-symbols-outlined">check</span>
-                </ConfirmBtn>
-                <RemoveBtn>
-                  <span className="material-symbols-outlined">close</span>
-                </RemoveBtn>
-              </FriendRequest>
-            </FriendRequestContainer>
-          ) : (
-            <></>
-          )}
+      <List>
+        {friendRequest ? (
+          <FriendRequestContainer>
+            <SubTitle>Friend Requests</SubTitle>
+            {RequestComponent}
+          </FriendRequestContainer>
+        ) : (
+          <></>
+        )}
 
-          <Friend>
-            <span className="material-symbols-outlined">person</span>
-            Name
-            <RemoveBtn>
-              <span className="material-symbols-outlined">close</span>
-            </RemoveBtn>
-          </Friend>
-        </List>
-      ) : (
-        <List>
+        {friendInfo ? (
+          <>{friendComponent}</>
+        ) : (
           <Message>
             You don't have any friends! Add friends to share routines and
             diaries!
           </Message>
-        </List>
-      )}
+        )}
+      </List>
     </Wrapper>
   );
 };

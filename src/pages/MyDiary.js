@@ -13,12 +13,24 @@ const Wrapper = styled.div`
   justify-content: center;
 `;
 
-const MyDiary = ({ setCurrentTab }) => {
+const MyDiary = ({ setCurrentTab, isLoggedIn }) => {
   const [date, setDate] = useState(new Date());
 
   useEffect(() => {
     setCurrentTab("my-diary");
   });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      return navigate("/");
+    }
+  }, []);
+
+  if (!isLoggedIn) {
+    return <></>;
+  }
 
   return (
     <Wrapper>

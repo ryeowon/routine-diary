@@ -165,7 +165,7 @@ const Login = ({ setUserInfo, setIsLoggedIn }) => {
 
     const userRef = query(idRef, equalTo(loginInfo.id));
 
-    // if email is unique, save account information to database.
+    // if ID is unique, save account information to database.
     // if not, show error message.
     onValue(
       userRef,
