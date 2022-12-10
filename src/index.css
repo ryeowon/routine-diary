@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700&display=swap");
 
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: "Raleway", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
@@ -7,9 +11,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  overflow-y: hidden;
-  background-color: "#FEFCF3";
-  height: 100%;
+  background: #fefcf3;
+  min-height: 100%;
 }
 
 code {

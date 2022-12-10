@@ -11,6 +11,16 @@ const Wrapper = styled.div`
   justify-content: space-between;
 
   padding: 80px ${(props) => props.theme.wrapper_padding};
+
+  overflow-y: scroll;
+  height: 100%;
+  position: relative;
+
+  @media only screen and (max-width: 768px) {
+    padding: 80px 4vw;
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const Routine = ({ setCurrentTab, isLoggedIn, userInfo, setUserInfo }) => {
@@ -28,7 +38,7 @@ const Routine = ({ setCurrentTab, isLoggedIn, userInfo, setUserInfo }) => {
     if (!isLoggedIn) {
       return navigate("/");
     }
-  }, []);
+  }, [isLoggedIn]);
 
   if (!isLoggedIn) {
     return <></>;

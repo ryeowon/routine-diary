@@ -14,7 +14,12 @@ import {
 const Wrapper = styled.div`
   width: 100%;
   max-width: 500px;
-  margin: 0 0vw;
+  margin-left: 2vw;
+
+  @media only screen and (max-width: 768px) {
+    max-width: 400px;
+    margin: 3vh 0;
+  }
 `;
 
 const DiaryWrapper = styled.div`
@@ -25,6 +30,10 @@ const DiaryContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px 0px;
   border-radius: 10px;
   margin-bottom: 6vh;
+
+  @media only screen and (max-width: 768px) {
+    margin-bottom: 2vh;
+  }
 `;
 
 const SelectedDate = styled.div`

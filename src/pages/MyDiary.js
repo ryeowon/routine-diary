@@ -6,11 +6,17 @@ import Diary from "../components/Diary";
 
 // css for components in MyDiary.js
 const Wrapper = styled.div`
-  width: 100%;
+  //width: 100%;
   margin: 0 auto;
   display: flex;
   padding: 100px 0;
   justify-content: center;
+
+  @media only screen and (max-width: 768px) {
+    padding: 80px 4vw;
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const MyDiary = ({ setCurrentTab, userInfo, setUserInfo, isLoggedIn }) => {

@@ -12,7 +12,9 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  margin-left: 2vw;
+`;
 
 const Title = styled.div`
   font-size: x-large;

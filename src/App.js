@@ -21,7 +21,7 @@ import {
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.light0};
-  height: 100vh;
+  height: 100%;
 `;
 
 function App() {
@@ -52,14 +52,17 @@ function App() {
           onlyOnce: true,
         }
       );
+    } else {
+      setUserInfo(null);
     }
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <Background>
       <BrowserRouter>
         <Header
           isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
           userInfo={userInfo}
           currentTab={currentTab}
         />

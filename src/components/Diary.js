@@ -16,13 +16,24 @@ import {
 } from "firebase/database";
 
 const Wrapper = styled.div`
-  width: 50vw;
+  //width: 30vw;
   margin-left: 100px;
+  //min-width: 700px;
+
+  @media only screen and (max-width: 768px) {
+    margin: 30px 0;
+  }
 `;
 
 const DiaryContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px 0px;
   border-radius: 10px;
+
+  width: 50vw;
+
+  @media only screen and (max-width: 768px) {
+    width: 70vw;
+  }
 `;
 
 const SelectedDate = styled.div`

@@ -27,7 +27,12 @@ const Title = styled(Link)`
   text-decoration: none;
   color: black;
   cursor: pointer;
-  min-width: 300px;
+  min-width: 250px;
+
+  @media only screen and (max-width: 768px) {
+    font-size: large;
+    min-width: 200px;
+  }
 `;
 
 const RightComponent = styled.div`
@@ -58,6 +63,11 @@ const Login = styled(Link)`
     background-color: ${(props) => props.theme.dark2};
     color: white;
   }
+
+  @media only screen and (max-width: 768px) {
+    font-size: 0.8em;
+    width: 70px;
+  }
 `;
 
 const Register = styled(Link)`
@@ -81,12 +91,27 @@ const Register = styled(Link)`
     background-color: ${(props) => props.theme.dark2};
     color: white;
   }
+
+  @media only screen and (max-width: 768px) {
+    font-size: 0.8em;
+    width: 70px;
+  }
 `;
 
 const CenterComponent = styled.div`
   display: flex;
-  margin-left: -40vw;
+  margin-left: -30vw;
   align-items: center;
+
+  @media only screen and (max-width: 1024px) {
+    font-size: 15px;
+    margin-left: -15vw;
+  }
+
+  @media only screen and (max-width: 768px) {
+    font-size: 15px;
+    margin-left: -10vw;
+  }
 `;
 
 const Tab = styled(Link)`
@@ -102,7 +127,28 @@ const Tab = styled(Link)`
   }
 `;
 
-const Header = ({ isLoggedIn, userInfo, currentTab }) => {
+const LogOut = styled.span`
+  margin-left: 10px;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+  &:hover {
+    color: ${(props) => props.theme.dark2};
+  }
+  cursor: pointer;
+  transition: all 0.4s ease;
+`;
+
+const Greeting = styled.span`
+  display: flex;
+  align-items: center;
+
+  @media only screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const Header = ({ isLoggedIn, setIsLoggedIn, userInfo, currentTab }) => {
   const [isActive, setIsActive] = useState({
     routine: true,
     diary: false,
@@ -152,8 +198,18 @@ const Header = ({ isLoggedIn, userInfo, currentTab }) => {
 
       {isLoggedIn ? (
         <RightComponent>
-          <span className="material-symbols-outlined">account_circle</span>
-          &nbsp;&nbsp;Hello, {userInfo.username}!
+          <Greeting>
+            <span className="material-symbols-outlined">account_circle</span>
+            &nbsp;&nbsp;Hello, &nbsp;<strong>{userInfo.username}</strong>!{" "}
+          </Greeting>
+          <LogOut
+            className="material-symbols-outlined"
+            onClick={() => {
+              setIsLoggedIn(false);
+            }}
+          >
+            logout
+          </LogOut>
         </RightComponent>
       ) : (
         <RightComponent>

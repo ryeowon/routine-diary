@@ -20,6 +20,7 @@ const Wrapper = styled.div`
   width: 25vw;
   padding: 20px 0;
   margin-left: 10px;
+  //overflow-y: scroll;
 `;
 
 const Title = styled.div`
@@ -273,9 +274,8 @@ const RoutineEditor = ({
   const onParticipantClick = (friend_id) => {
     // update participants
     let temp_info = routineInfo.participants;
-    console.log("why..", temp_info);
 
-    if (routineInfo.participants[friend_id]) {
+    if (routineNum !== "new" && routineInfo.participants[friend_id]) {
       alert("cannot remove friends.");
     } else if (temp_info[friend_id]) {
       delete temp_info[friend_id];

@@ -20,6 +20,12 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 100px ${(props) => props.theme.wrapper_padding};
+
+  @media only screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 5vw;
+  }
   //justify-content: center;
 `;
 
