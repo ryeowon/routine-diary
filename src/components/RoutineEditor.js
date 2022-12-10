@@ -502,7 +502,7 @@ const RoutineEditor = ({
                   setIsEdit(false);
                 }}
               >
-                Delete Routine
+                Stop Routine
               </Button>
             </InputWrapper>
           )}

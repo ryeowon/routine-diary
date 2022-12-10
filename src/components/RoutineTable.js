@@ -101,6 +101,35 @@ const CheckLabel = styled.span`
 const AddBtn = styled.span`
   font-weight: bold;
 `;
+
+const FriendCheckMarks = styled.div`
+  position: absolute;
+  right: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const FriendCheck = styled.div`
+  font-size: x-small;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5px;
+`;
+
+const FriendCheckLabel = styled.span`
+  height: 10px;
+  font-size: small;
+  font-weight: bold;
+  padding-top: 1px;
+`;
+
+const FriendName = styled.div`
+  color: gray;
+  font-size: 900;
+`;
 //end of css
 
 const RoutineTable = ({
@@ -204,13 +233,49 @@ const RoutineTable = ({
     let num = 0;
     if (Object.entries(routineList).length) {
       const component = Object.entries(routineList).map((routineInfo, idx) => {
-        //console.log("info", routineInfo);
+        console.log("info", routineInfo);
 
         //console.log(day);
+
+        console.log(routineInfo[1].participants);
 
         if (!routineInfo[1].cycle[day]) return <></>;
 
         num += 1;
+
+        const friendComponent = Object.entries(routineInfo[1].participants).map(
+          (participant_id) => {
+            if (participant_id[0] === userInfo.id) return <></>;
+            //console.log("a", participant_id[1].performed_dates[date]);
+
+            console.log("a", participant_id[0]);
+
+            let icon = "close";
+
+            if (
+              participant_id[1].performed_dates &&
+              participant_id[1].performed_dates[date]
+            ) {
+              icon = "done";
+            }
+
+            console.log("a", participant_id[0]);
+
+            return (
+              <FriendCheck>
+                <FriendCheckLabel className="material-symbols-outlined">
+                  person
+                </FriendCheckLabel>
+                <FriendName>{participant_id[1].username}</FriendName>
+                <FriendCheckLabel className="material-symbols-outlined">
+                  {icon}
+                </FriendCheckLabel>
+              </FriendCheck>
+            );
+          }
+        );
+
+        //console.log(friendComponent);
 
         return (
           <Row>
@@ -223,6 +288,7 @@ const RoutineTable = ({
             >
               {routineInfo[1].name}
             </RoutineName>
+            <FriendCheckMarks>{friendComponent}</FriendCheckMarks>
             <RoutineCheck onClick={() => CheckRoutine(routineInfo[0])}>
               {routineInfo[1].participants[userInfo.id].performed_dates &&
               routineInfo[1].participants[userInfo.id].performed_dates[date] ? (
