@@ -151,6 +151,10 @@ const RoutineTable = ({
     const db = getDatabase();
 
     let temp_list = {};
+    if (!routine_list) {
+      setRoutineList((prev) => temp_list);
+      return;
+    }
 
     Object.values(routine_list).forEach((routine_id, idx) => {
       const routineRef = query(ref(db, "/routines/" + routine_id));
@@ -204,8 +208,7 @@ const RoutineTable = ({
 
         //console.log(day);
 
-        if (!routineInfo[1].isActive || !routineInfo[1].cycle[day])
-          return <></>;
+        if (!routineInfo[1].cycle[day]) return <></>;
 
         num += 1;
 
@@ -220,7 +223,7 @@ const RoutineTable = ({
             >
               {routineInfo[1].name}
             </RoutineName>
-            <RoutineCheck>
+            <RoutineCheck onClick={() => CheckRoutine(routineInfo[0])}>
               {routineInfo[1].participants[userInfo.id].performed_dates &&
               routineInfo[1].participants[userInfo.id].performed_dates[date] ? (
                 <CheckLabel className="material-symbols-outlined">
@@ -236,8 +239,57 @@ const RoutineTable = ({
 
       setRoutineComponent(component);
     } else {
+      setRoutineComponent(<div></div>);
     }
   }, [routineList, date, day]);
+
+  const CheckRoutine = (routine_id) => {
+    let performed_dates =
+      routineList[routine_id].participants[userInfo.id].performed_dates;
+
+    if (!performed_dates) performed_dates = {};
+    if (performed_dates[date]) {
+      delete performed_dates[date];
+    } else {
+      performed_dates[date] = true;
+    }
+
+    const db = getDatabase();
+    const updates = {};
+
+    // update performed date.
+    updates[
+      "routines/" +
+        routine_id +
+        "/participants/" +
+        userInfo.id +
+        "/performed_dates"
+    ] = performed_dates;
+
+    update(ref(db), updates)
+      .then(() => {
+        // load user's information again.
+        let id = userInfo.id;
+        const idRef = query(ref(db, "/users"), orderByChild("id"));
+        const userRef = query(idRef, equalTo(id));
+
+        onValue(
+          userRef,
+          (snapshot) => {
+            console.log("edit", snapshot.val());
+            if (snapshot.val()) {
+              setUserInfo(snapshot.val()[id]);
+            } else {
+              setUserInfo(null);
+            }
+          },
+          {
+            onlyOnce: true,
+          }
+        );
+      })
+      .catch((error) => {});
+  };
 
   return (
     <Wrapper>

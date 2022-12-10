@@ -99,7 +99,10 @@ const FriendsDiary = ({ date, userInfo }) => {
   }, [date]);
 
   useEffect(() => {
+    if (!userInfo.friends) return;
+
     let friend_list = Object.keys(userInfo.friends);
+
     console.log(friend_list);
 
     const db = getDatabase();

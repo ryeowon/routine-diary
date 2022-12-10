@@ -136,6 +136,7 @@ const RoutineEditor = ({
   setUserInfo,
   routineList,
   setIsEdit,
+  date,
 }) => {
   const [routineInfo, setRoutineInfo] = useState({
     cycle: {
@@ -177,14 +178,7 @@ const RoutineEditor = ({
       </Box>
     </CycleContainer>
   );
-  const [participantsComponent, setParticipantsComponent] = useState(
-    <CycleContainer>
-      <Box active={routineInfo.participants[userInfo.id]}>Me</Box>
-      <Box>
-        <span className="material-symbols-outlined">person_add</span>
-      </Box>
-    </CycleContainer>
-  );
+  const [participantsComponent, setParticipantsComponent] = useState(<></>);
 
   useEffect(() => {
     console.log("editor", routineList);
@@ -200,7 +194,6 @@ const RoutineEditor = ({
             sat: false,
             sun: false,
           },
-          isActive: true,
           name: "",
           participants: {},
         };
@@ -250,6 +243,7 @@ const RoutineEditor = ({
       </CycleContainer>
     );
 
+    if (!userInfo.friends) return;
     const component = Object.entries(userInfo.friends).map((friendInfo) => {
       //console.log(friendInfo);
       return (
@@ -281,7 +275,9 @@ const RoutineEditor = ({
     let temp_info = routineInfo.participants;
     console.log("why..", temp_info);
 
-    if (temp_info[friend_id]) {
+    if (routineInfo.participants[friend_id]) {
+      alert("cannot remove friends.");
+    } else if (temp_info[friend_id]) {
       delete temp_info[friend_id];
     } else {
       temp_info[friend_id] = {
@@ -321,10 +317,7 @@ const RoutineEditor = ({
 
           Object.keys(routineInfo.participants).forEach((id) => {
             console.log("id", id);
-            const newRoutineKey = push(
-              child(ref(db), "/users/" + id + "/routines/")
-            ).key;
-            updates["/users/" + id + "/routines/" + newRoutineKey] = count;
+            updates["/users/" + id + "/routines/" + count] = count;
           });
 
           console.log(updates);
@@ -363,6 +356,86 @@ const RoutineEditor = ({
         console.error(error);
       });
     //update(ref(db), updates);
+  };
+
+  const DeleteRoutine = () => {
+    const db = getDatabase();
+
+    let participants = routineInfo.participants;
+    delete participants[userInfo.id];
+
+    const updates = {};
+    updates["users/" + userInfo.id + "/routines/" + routineNum] = null;
+    updates["routines/" + routineNum + "/participants"] = participants;
+
+    console.log(updates);
+
+    update(ref(db), updates)
+      .then(() => {
+        // load user's information again.
+        let id = userInfo.id;
+        const idRef = query(ref(db, "/users"), orderByChild("id"));
+        const userRef = query(idRef, equalTo(id));
+
+        onValue(
+          userRef,
+          (snapshot) => {
+            console.log("RoutineEditor.js", snapshot.val());
+            if (snapshot.val()) {
+              setUserInfo(snapshot.val()[id]);
+            } else {
+              setUserInfo(null);
+            }
+          },
+          {
+            onlyOnce: true,
+          }
+        );
+      })
+      .catch((error) => {});
+
+    //console.log("delete!");
+  };
+
+  const EditRoutine = () => {
+    const db = getDatabase();
+
+    const updates = {};
+    //console.log(userInfo.username);
+    //routineInfo.participants[userInfo.id].username = userInfo.username;
+
+    Object.keys(routineInfo.participants).forEach((id) => {
+      console.log("id", id);
+      updates["/users/" + id + "/routines/" + routineNum] = routineNum;
+    });
+
+    updates["/routines/" + routineNum] = routineInfo;
+
+    console.log(updates);
+
+    update(ref(db), updates)
+      .then(() => {
+        // load user's information again.
+        let id = userInfo.id;
+        const idRef = query(ref(db, "/users"), orderByChild("id"));
+        const userRef = query(idRef, equalTo(id));
+
+        onValue(
+          userRef,
+          (snapshot) => {
+            console.log("edit", snapshot.val());
+            if (snapshot.val()) {
+              setUserInfo(snapshot.val()[id]);
+            } else {
+              setUserInfo(null);
+            }
+          },
+          {
+            onlyOnce: true,
+          }
+        );
+      })
+      .catch((error) => {});
   };
 
   return (
@@ -415,8 +488,22 @@ const RoutineEditor = ({
             </InputWrapper>
           ) : (
             <InputWrapper>
-              <Button>Save</Button>
-              <Button onClick={() => setIsEdit(false)}>Delete Routine</Button>
+              <Button
+                onClick={() => {
+                  EditRoutine();
+                  setIsEdit(false);
+                }}
+              >
+                Save
+              </Button>
+              <Button
+                onClick={() => {
+                  DeleteRoutine();
+                  setIsEdit(false);
+                }}
+              >
+                Delete Routine
+              </Button>
             </InputWrapper>
           )}
         </Container>
