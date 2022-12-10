@@ -2,6 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Calendar } from "react-calendar";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  query,
+  equalTo,
+  orderByChild,
+  push,
+  child,
+  update,
+} from "firebase/database";
 
 const Wrapper = styled.div`
   width: 50vw;
@@ -86,22 +98,79 @@ const SaveBtn = styled.button`
   }
 `;
 
-const Diary = ({ date }) => {
+const Diary = ({ date, userInfo, setUserInfo }) => {
   const [dateLabel, setDateLabel] = useState("");
   const [contents, setContents] = useState("");
+  const [diaryInfo, setDiaryInfo] = useState("");
+  const [diaryComponent, setDiaryComponent] = useState(<></>);
+  const [diaryContent, setDiaryContent] = useState();
+
   useEffect(() => {
-    setDateLabel(date.toLocaleDateString());
+    let offset = date.getTimezoneOffset() * 60000;
+    let dateOffset = new Date(date.getTime() - offset);
+    setDateLabel(dateOffset.toISOString().substring(0, 10));
   }, [date]);
+
+  useEffect(() => {
+    if (userInfo.diary) {
+      setDiaryInfo(userInfo.diary[dateLabel]);
+      //console.log(dateLabel);
+      //console.log(userInfo.diary[dateLabel]);
+    }
+  }, [userInfo, dateLabel]);
+
+  const SaveDiary = () => {
+    const db = getDatabase();
+
+    // save diary to database
+    const updates = {};
+    updates["/users/" + userInfo.id + "/diary/" + dateLabel + "/text"] =
+      diaryContent;
+    update(ref(db), updates);
+
+    // load user's information again.
+    const idRef = query(ref(db, "/users"), orderByChild("id"));
+    let id = userInfo.id;
+    const userRef = query(idRef, equalTo(id));
+
+    onValue(
+      userRef,
+      (snapshot) => {
+        console.log("Diary.js", snapshot.val());
+        if (snapshot.val()) {
+          setUserInfo(snapshot.val()[id]);
+        } else {
+          setUserInfo(null);
+        }
+      },
+      {
+        onlyOnce: true,
+      }
+    );
+  };
+
+  const onChange = (e) => {
+    setDiaryContent(e.target.value);
+  };
+
   return (
     <Wrapper>
       <DiaryContainer>
         <SelectedDate>{dateLabel}</SelectedDate>
         <DiaryContent>
-          <TextArea placeholder="Write today's diary!" />
+          {diaryInfo ? (
+            <>{diaryInfo.text}</>
+          ) : (
+            <TextArea onChange={onChange} placeholder="Write today's diary!" />
+          )}
         </DiaryContent>
         <AchievementRate>Routine Achievement Rate</AchievementRate>
       </DiaryContainer>
-      <SaveBtn>Save Today's Diary</SaveBtn>
+      {diaryInfo ? (
+        <></>
+      ) : (
+        <SaveBtn onClick={SaveDiary}>Save Today's Diary</SaveBtn>
+      )}
     </Wrapper>
   );
 };

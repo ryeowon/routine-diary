@@ -2,6 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Calendar } from "react-calendar";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import {
+  getDatabase,
+  onValue,
+  query,
+  ref,
+  orderByChild,
+  equalTo,
+} from "firebase/database";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -9,16 +17,21 @@ const Wrapper = styled.div`
   margin: 0 0vw;
 `;
 
+const DiaryWrapper = styled.div`
+  overflow-y: scroll;
+`;
+
 const DiaryContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px 0px;
   border-radius: 10px;
+  margin-bottom: 6vh;
 `;
 
 const SelectedDate = styled.div`
   background-color: ${(props) => props.theme.dark1};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  padding: 7px;
+  padding: 7px 20px;
   text-align: center;
   font-weight: 600;
   font-size: large;
@@ -27,11 +40,13 @@ const SelectedDate = styled.div`
     rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   position: relative;
   z-index: 10;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const DiaryContent = styled.div`
   background-color: ${(props) => props.theme.light1};
-  min-height: 200px;
+  min-height: 150px;
   border-left: 1px solid black;
   border-right: 1px solid black;
   border-bottom: none;
@@ -62,24 +77,100 @@ const Message = styled.div`
   color: gray;
 `;
 
-const FriendsDiary = ({ friendsInfo, date }) => {
+const FriendName = styled.span`
+  //color: white;
+  //text-decoration: underline;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  padding: 2px 7px 2px 7px;
+`;
+
+const FriendsDiary = ({ date, userInfo }) => {
   const [dateLabel, setDateLabel] = useState("");
   const [contents, setContents] = useState("");
-  const [diaryList, setDiaryList] = useState(null);
+  const [diaryList, setDiaryList] = useState({});
+  const [diaryComponent, setDiaryComponent] = useState(<></>);
+  const [IsdiaryExist, setIsDiaryExist] = useState(false);
 
   useEffect(() => {
-    setDateLabel(date.toISOString().substring(0, 10));
+    let offset = date.getTimezoneOffset() * 60000;
+    let dateOffset = new Date(date.getTime() - offset);
+    setDateLabel(dateOffset.toISOString().substring(0, 10));
   }, [date]);
+
+  useEffect(() => {
+    let friend_list = Object.keys(userInfo.friends);
+    console.log(friend_list);
+
+    const db = getDatabase();
+    const idRef = query(ref(db, "/users"), orderByChild("id"));
+
+    let temp_list = {};
+    setIsDiaryExist(false);
+    //setDiaryList({});
+
+    friend_list.forEach((friend_id) => {
+      const userRef = query(idRef, equalTo(friend_id));
+      onValue(
+        userRef,
+        (snapshot) => {
+          //console.log("FriendsDiary.js", snapshot.val());
+          let diaryInfo = snapshot.val()[friend_id].diary[dateLabel];
+          console.log(friend_id, diaryInfo);
+          if (diaryInfo) {
+            temp_list[friend_id] = diaryInfo;
+            //setDiaryList((prev) => temp_list);
+            console.log("templist", temp_list);
+            setDiaryList((prev) => temp_list);
+          }
+        },
+        {
+          onlyOnce: true,
+        }
+      );
+      //console.log(Object.values(diaryList).length);
+    });
+
+    //setDiaryList((prev) => temp_list);
+    console.log("diaryList", diaryList);
+  }, [userInfo, dateLabel]);
+
+  useEffect(() => {
+    //console.log("value", Object.values(diaryList).length);
+    //console.log("useEffect", diaryList);
+    //console.log("useEffect", Object.entries(diaryList).length);
+    if (Object.entries(diaryList).length) {
+      setIsDiaryExist(true);
+      const component = Object.entries(diaryList).map((diaryInfo) => {
+        //console.log("info", diaryInfo);
+        return (
+          <DiaryContainer>
+            <SelectedDate>
+              <label>
+                <FriendName>{userInfo.friends[diaryInfo[0]]}</FriendName>'s
+                Diary
+              </label>
+              {dateLabel}
+            </SelectedDate>
+            <DiaryContent>{diaryInfo[1].text}</DiaryContent>
+            <AchievementRate>Routine Achievement Rate</AchievementRate>
+          </DiaryContainer>
+        );
+      });
+
+      setDiaryComponent(component);
+    } else {
+    }
+  }, [diaryList]);
+
+  //console.log("length", )
 
   return (
     <Wrapper>
       <Title>Friend's Diaries</Title>
-      {diaryList ? (
-        <DiaryContainer>
-          <SelectedDate>{dateLabel}</SelectedDate>
-          <DiaryContent></DiaryContent>
-          <AchievementRate>Routine Achievement Rate</AchievementRate>
-        </DiaryContainer>
+
+      {IsdiaryExist ? (
+        <DiaryWrapper>{diaryComponent}</DiaryWrapper>
       ) : (
         <Message>
           There is no friend's diary. Select other dates or add a new friend.

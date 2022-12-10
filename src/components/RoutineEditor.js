@@ -98,7 +98,7 @@ const Button = styled.button`
   }
 `;
 
-const RoutineEditor = ({ isNew }) => {
+const RoutineEditor = ({ isNew, userInfo }) => {
   return (
     <>
       {isNew ? (

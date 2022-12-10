@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   justify-content: center;
 `;
 
-const MyDiary = ({ setCurrentTab, isLoggedIn }) => {
+const MyDiary = ({ setCurrentTab, userInfo, setUserInfo, isLoggedIn }) => {
   const [date, setDate] = useState(new Date());
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const MyDiary = ({ setCurrentTab, isLoggedIn }) => {
   return (
     <Wrapper>
       <Calander date={date} setDate={setDate} />
-      <Diary date={date} />
+      <Diary date={date} userInfo={userInfo} setUserInfo={setUserInfo} />
     </Wrapper>
   );
 };

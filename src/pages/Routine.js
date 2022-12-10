@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   padding: 80px ${(props) => props.theme.wrapper_padding};
 `;
 
-const Routine = ({ setCurrentTab, isLoggedIn }) => {
+const Routine = ({ setCurrentTab, isLoggedIn, userInfo, setUserInfo }) => {
   const [isNew, setisNew] = useState(true);
 
   useEffect(() => {
@@ -34,8 +34,12 @@ const Routine = ({ setCurrentTab, isLoggedIn }) => {
 
   return (
     <Wrapper>
-      <RoutineTable />
-      <RoutineEditor isNew={isNew} />
+      <RoutineTable userInfo={userInfo} />
+      <RoutineEditor
+        isNew={isNew}
+        userInfo={userInfo}
+        setUserInfo={setUserInfo}
+      />
     </Wrapper>
   );
 };

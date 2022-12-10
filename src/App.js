@@ -79,6 +79,7 @@ function App() {
               <MyDiary
                 setCurrentTab={setCurrentTab}
                 userInfo={userInfo}
+                setUserInfo={setUserInfo}
                 isLoggedIn={isLoggedIn}
               />
             }
@@ -89,6 +90,7 @@ function App() {
               <Routine
                 setCurrentTab={setCurrentTab}
                 userInfo={userInfo}
+                setUserInfo={setUserInfo}
                 isLoggedIn={isLoggedIn}
               />
             }

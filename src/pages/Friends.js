@@ -75,7 +75,7 @@ const Friends = ({ setCurrentTab, userInfo, setUserInfo, isLoggedIn }) => {
   return (
     <Wrapper>
       <MyCalander date={date} setDate={setDate} />
-      <FriendsDiary date={date} />
+      <FriendsDiary date={date} userInfo={userInfo} />
       <FriendList
         setModal={setModal}
         userInfo={userInfo}
