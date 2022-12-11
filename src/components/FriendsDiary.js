@@ -29,7 +29,7 @@ const DiaryWrapper = styled.div`
 const DiaryContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px 0px;
   border-radius: 10px;
-  margin-bottom: 6vh;
+  margin-bottom: 2vh;
 
   @media only screen and (max-width: 768px) {
     margin-bottom: 2vh;
@@ -55,7 +55,7 @@ const SelectedDate = styled.div`
 
 const DiaryContent = styled.div`
   background-color: ${(props) => props.theme.light1};
-  min-height: 150px;
+  min-height: 100px;
   border-left: 1px solid black;
   border-right: 1px solid black;
   border-bottom: none;
@@ -64,6 +64,9 @@ const DiaryContent = styled.div`
   z-index: 9;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
     rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  border-bottom: 1px solid black;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 `;
 
 const AchievementRate = styled.div`
@@ -168,7 +171,6 @@ const FriendsDiary = ({ date, userInfo }) => {
               {dateLabel}
             </SelectedDate>
             <DiaryContent>{diaryInfo[1].text}</DiaryContent>
-            <AchievementRate>Routine Achievement Rate</AchievementRate>
           </DiaryContainer>
         );
       });

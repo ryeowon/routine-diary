@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useNavigation } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 
 // styled components for Home.js
@@ -62,7 +62,7 @@ const Title = styled.div`
   margin-bottom: 20px;
 `;
 
-const SubTitle = styled.div`
+const SubTitle = styled.span`
   font-weight: 600;
   color: white;
   text-align: center;
@@ -75,6 +75,52 @@ const Icon = styled.span`
 `;
 
 const MainContent = styled.div``;
+
+const Introduce = styled.section`
+  height: 45vh;
+  background-color: ${(props) => props.color};
+  padding: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const LastSection = styled.section`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  span {
+    color: black;
+  }
+`;
+
+const Explanation = styled.div`
+  width: 25vw;
+  //padding: 0vw;
+  h1 {
+    font-size: 1.8em;
+  }
+  p {
+    font-size: 1.2em;
+  }
+`;
+
+const RoutineTable = styled.img`
+  height: 30vh;
+  margin-left: 3vw;
+`;
+
+const RoutineEditor = styled.img`
+  height: 40vh;
+  margin-right: 10vw;
+`;
+
+const Diaries = styled.img`
+  height: 38vh;
+  margin-right: 3vw;
+`;
 
 const StartBtn = styled.button`
   background-color: white;
@@ -99,22 +145,107 @@ const StartBtn = styled.button`
   }
 `;
 
+const RegisterBtn = styled.button`
+  background-color: white;
+  font-size: 20px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  min-width: 200px;
+  padding: 10px 0;
+  margin: 60px 1vw;
+  //display: block;
+  opacity: 0.9;
+  font-weight: 600;
+  background-color: ${(props) => props.theme.dark1};
+  box-shadow: ${(props) => props.theme.btn_shadow};
+
+  &:hover {
+    background-color: ${(props) => props.theme.dark2};
+    color: white;
+  }
+  &:active {
+    box-shadow: ${(props) => props.theme.active_shadow};
+    transform: translateY(2px);
+  }
+`;
+
+const LoginBtn = styled.button`
+  background-color: white;
+  font-size: 20px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  min-width: 200px;
+  padding: 10px 0;
+  margin: 60px 1vw;
+  opacity: 0.9;
+  font-weight: 600;
+  background-color: ${(props) => props.theme.light1};
+  box-shadow: ${(props) => props.theme.btn_shadow};
+
+  &:hover {
+    background-color: ${(props) => props.theme.dark2};
+    color: white;
+  }
+  &:active {
+    box-shadow: ${(props) => props.theme.active_shadow};
+    transform: translateY(2px);
+  }
+`;
+
 const Home = () => {
+  const navigate = useNavigate();
+
   return (
     <Wrapper>
       <MainSection>
         <MainContent>
           <Title>
             <Icon className="material-symbols-outlined">edit_calendar</Icon>
-            &nbsp;Routine Diary
+            <span>&nbsp;Routine Diary</span>
           </Title>
           <SubTitle>Enjoy a Regular Life with Your Friends.</SubTitle>
-          <StartBtn>Getting Started</StartBtn>
+          <StartBtn onClick={() => navigate("/register")}>
+            Getting Started
+          </StartBtn>
         </MainContent>
         <DownArrow className="material-symbols-outlined">
           keyboard_double_arrow_down
         </DownArrow>
       </MainSection>
+      <Introduce>
+        <RoutineEditor src="./routine_editor.png" />
+        <Explanation>
+          <h1>Make your own routine.</h1>
+          <p>Set routine name, routine cycle and friends to do with.</p>
+        </Explanation>
+      </Introduce>
+      <Introduce>
+        <Explanation>
+          <h1>Keep routines with your friends.</h1>
+          <p>Check out your friend's achievements in real time.</p>
+        </Explanation>
+        <RoutineTable src="./routine_table.png" />
+      </Introduce>
+      <Introduce>
+        <Diaries src="./diaries.png" />
+        <Explanation>
+          <h1>Share Diary with Friends.</h1>
+          <p>Share your day and feelings with your friends </p>
+        </Explanation>
+      </Introduce>
+      <LastSection>
+        <Title>
+          <Icon className="material-symbols-outlined">edit_calendar</Icon>
+          <span>&nbsp;Routine Diary</span>
+        </Title>
+        <SubTitle>Enjoy a Regular Life with Your Friends.</SubTitle>
+        <div>
+          <RegisterBtn onClick={() => navigate("/register")}>
+            Register
+          </RegisterBtn>
+          <LoginBtn onClick={() => navigate("/login")}>Login</LoginBtn>
+        </div>
+      </LastSection>
     </Wrapper>
   );
 };

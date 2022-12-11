@@ -56,7 +56,9 @@ const DiaryContent = styled.div`
   min-height: 200px;
   border-left: 1px solid black;
   border-right: 1px solid black;
-  border-bottom: none;
+  border-bottom: 1px solid black;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
   padding: 7px;
   position: relative;
   z-index: 9;
@@ -175,7 +177,6 @@ const Diary = ({ date, userInfo, setUserInfo }) => {
             <TextArea onChange={onChange} placeholder="Write today's diary!" />
           )}
         </DiaryContent>
-        <AchievementRate>Routine Achievement Rate</AchievementRate>
       </DiaryContainer>
       {diaryInfo ? (
         <></>
