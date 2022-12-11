@@ -207,14 +207,16 @@ const Header = ({ isLoggedIn, setIsLoggedIn, userInfo, currentTab }) => {
             <span className="material-symbols-outlined">account_circle</span>
             &nbsp;&nbsp;Hello, &nbsp;<strong>{userInfo.username}</strong>!{" "}
           </Greeting>
-          <LogOut
-            className="material-symbols-outlined"
-            onClick={() => {
-              setIsLoggedIn(false);
-            }}
-          >
-            logout
-          </LogOut>
+          <Link to="/">
+            <LogOut
+              className="material-symbols-outlined"
+              onClick={() => {
+                setIsLoggedIn(false);
+              }}
+            >
+              logout
+            </LogOut>
+          </Link>
         </RightComponent>
       ) : (
         <RightComponent>
