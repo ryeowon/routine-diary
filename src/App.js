@@ -29,6 +29,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentTab, setCurrentTab] = useState("routine");
 
+  // when user logged in, load user information from database.
+  // when user logged out, set user information to null.
   useEffect(() => {
     if (isLoggedIn) {
       const db = getDatabase();

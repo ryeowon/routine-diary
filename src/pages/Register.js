@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { fireStore } from "../firebase";
 import {
   getDatabase,
   ref,
@@ -12,7 +11,7 @@ import {
   orderByChild,
 } from "firebase/database";
 
-// css for components in Register.js
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
   width: 100%;
   margin: 0 auto;
@@ -85,9 +84,9 @@ const ErrorMessage = styled.div`
   min-width: 300px;
   width: 25vw;
 `;
-// End of css
+// End of styled components
 
-// register page
+// Function to render register page
 const Register = () => {
   // state variables
   const [isValid, setIsValid] = useState({
@@ -110,13 +109,11 @@ const Register = () => {
     password: "",
     password_confirmation: "",
   });
-  const [isUnique, setIsUnique] = useState(true);
 
   const [isAllValid, setIsAllValid] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
 
   useEffect(() => {
-    //console.log(isValid);
     // if all input values are valid, set isAllValid to true and enable the register button.
     if (
       isValid.username &&
@@ -124,12 +121,10 @@ const Register = () => {
       isValid.password &&
       isValid.password_confirmation
     ) {
-      //console.log("true");
       setIsAllValid(true);
     } else {
       setIsAllValid(false);
     }
-    //console.log("a");
   }, [errorMsg]);
 
   // function to check if the input values are valid.
@@ -152,7 +147,7 @@ const Register = () => {
       let id = e.target.value;
 
       // check id
-      if (!id.match(/[!?@#$%^&*():;+\-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]/)) {
+      if (!id.match(/[^A-Za-z0-9]+/g)) {
         isValid.id = true;
         accountInfo.id = id;
         setErrorMsg((prevState) => {
@@ -256,12 +251,7 @@ const Register = () => {
         });
       }
     }
-    //console.log(errorMsg);
   };
-
-  useEffect(() => {
-    //checkidDuplicate();
-  });
 
   const onBtnClick = () => {
     const db = getDatabase();
@@ -289,8 +279,6 @@ const Register = () => {
         onlyOnce: true,
       }
     );
-
-    //console.log(accountInfo);
   };
 
   const navigate = useNavigate();

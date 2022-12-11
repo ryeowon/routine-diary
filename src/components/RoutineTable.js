@@ -14,9 +14,8 @@ import {
   update,
 } from "firebase/database";
 
-// css for components in Routine.js
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
-  //justify-content: center;
   padding: 20px 0;
 `;
 
@@ -41,7 +40,7 @@ const Row = styled.div`
   display: grid;
   grid-template-columns: 6fr 1fr;
   background-color: ${(props) => props.theme.light1};
-  padding: 10px;
+  padding: 0 10px;
   border-radius: 10px;
   position: relative;
   padding-left: 48px;
@@ -55,7 +54,7 @@ const AddRow = styled.div`
   display: grid;
   grid-template-columns: 6fr 1fr;
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 10px;
+  padding: 0 10px;
   border-radius: 10px;
   position: relative;
   padding-left: 48px;
@@ -79,6 +78,7 @@ const RowNum = styled.div`
 `;
 const RoutineName = styled.div`
   cursor: pointer;
+  padding: 10px 0;
 `;
 const RoutineCheck = styled.div`
   //background-color: ${(props) => props.theme.dark0};
@@ -130,8 +130,9 @@ const FriendName = styled.div`
   color: gray;
   font-size: 900;
 `;
-//end of css
+// End of styled components
 
+// Function to render routine table
 const RoutineTable = ({
   userInfo,
   setUserInfo,
@@ -142,7 +143,6 @@ const RoutineTable = ({
 }) => {
   const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
   const [day, setDay] = useState("mon");
-  const [isReady, setIsReady] = useState(0);
   const [now, setNow] = useState(new Date());
 
   const dayLabel = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
@@ -160,22 +160,16 @@ const RoutineTable = ({
     setDay(dayLabel[d.getDay()]);
   }, [now]);
 
+  // Function to set Date and Day whenever date is selected.
   const onChange = (e) => {
-    // set Date and Day whenever date is selected.
     setDate(e.target.value);
     let d = new Date(e.target.value);
     setDay(dayLabel[d.getDay()]);
   };
 
-  const promise1 = new Promise((resolve, reject) => {
-    resolve("Success!");
-  });
-
+  // whenever user information is changed, set routine list again.
   useEffect(() => {
     let routine_list = userInfo.routines;
-    console.log(userInfo);
-    console.log("routine list", routine_list);
-    //console.log(routineList);
 
     const db = getDatabase();
 
@@ -190,19 +184,9 @@ const RoutineTable = ({
       onValue(
         routineRef,
         (snapshot) => {
-          //console.log("FriendsDiary.js", snapshot.val());
           let routineInfo = snapshot.val();
-          //console.log(friend_id, diaryInfo);
-
           temp_list[routine_id] = routineInfo;
-          //setDiaryList((prev) => temp_list);
-          //console.log("templist", temp_list);
 
-          console.log(
-            "templist, routinelist length",
-            Object.entries(temp_list).length,
-            Object.entries(userInfo.routines).length
-          );
           if (
             Object.entries(temp_list).length ===
             Object.entries(userInfo.routines).length
@@ -214,41 +198,23 @@ const RoutineTable = ({
           onlyOnce: true,
         }
       );
-
-      //setRoutineList((prev) => temp_list);
-      //console.log(Object.values(diaryList).length);
-      //console.log(routineList);
     });
-
-    //setRoutineList((prev) => temp_list);
   }, [userInfo]);
 
+  // whenever routine list or date is changed, render routine list again.
   useEffect(() => {
-    //console.log("length", Object.entries(routineList).length);
-    console.log("routinelist", routineList);
-
-    //if (isReady !== Object.entries(userInfo.routines).length) return;
-    console.log("changed");
-
     let num = 0;
     if (Object.entries(routineList).length) {
       const component = Object.entries(routineList).map((routineInfo, idx) => {
-        console.log("info", routineInfo);
-
-        //console.log(day);
-
-        console.log(routineInfo[1].participants);
-
-        if (!routineInfo[1].cycle[day]) return <></>;
+        // render in consideration of the routine cycle.
+        if (!routineInfo[1].cycle[day]) return null;
 
         num += 1;
 
+        // set friend's achivment
         const friendComponent = Object.entries(routineInfo[1].participants).map(
-          (participant_id) => {
+          (participant_id, idx) => {
             if (participant_id[0] === userInfo.id) return <></>;
-            //console.log("a", participant_id[1].performed_dates[date]);
-
-            console.log("a", participant_id[0]);
 
             let icon = "close";
 
@@ -259,10 +225,8 @@ const RoutineTable = ({
               icon = "done";
             }
 
-            console.log("a", participant_id[0]);
-
             return (
-              <FriendCheck>
+              <FriendCheck key={"p" + idx}>
                 <FriendCheckLabel className="material-symbols-outlined">
                   person
                 </FriendCheckLabel>
@@ -275,10 +239,8 @@ const RoutineTable = ({
           }
         );
 
-        //console.log(friendComponent);
-
         return (
-          <Row>
+          <Row key={"r" + idx}>
             <RowNum>{num}</RowNum>
             <RoutineName
               onClick={() => {
@@ -309,10 +271,12 @@ const RoutineTable = ({
     }
   }, [routineList, date, day]);
 
+  // Function to set check mark
   const CheckRoutine = (routine_id) => {
     let performed_dates =
       routineList[routine_id].participants[userInfo.id].performed_dates;
 
+    // set user's performed date
     if (!performed_dates) performed_dates = {};
     if (performed_dates[date]) {
       delete performed_dates[date];

@@ -11,7 +11,7 @@ import {
   orderByChild,
 } from "firebase/database";
 
-// css for components in Register.js
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
   width: 100%;
   margin: 0 auto;
@@ -84,9 +84,9 @@ const ErrorMessage = styled.div`
   min-width: 300px;
   width: 25vw;
 `;
-// End of css
+// End of styled components
 
-// register page
+// Function to render login page
 const Login = ({ setUserInfo, setIsLoggedIn }) => {
   // state variables
   const [isValid, setIsValid] = useState({
@@ -108,7 +108,6 @@ const Login = ({ setUserInfo, setIsLoggedIn }) => {
   const [isCreated, setIsCreated] = useState(false);
 
   useEffect(() => {
-    //console.log(isValid);
     // if all input values are valid, set isAllValid to true and enable the register button.
     if (isValid.id && isValid.password) {
       console.log("true");
@@ -116,7 +115,6 @@ const Login = ({ setUserInfo, setIsLoggedIn }) => {
     } else {
       setIsAllValid(false);
     }
-    //console.log(isValid);
   }, [errorMsg]);
 
   // function to check if the input values are valid.
@@ -124,7 +122,7 @@ const Login = ({ setUserInfo, setIsLoggedIn }) => {
     if (e.target.name === "id") {
       // check id
       let id = e.target.value;
-      if (!id.match(/[!?@#$%^&*():;+\-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]/)) {
+      if (!id.match(/[^A-Za-z0-9]+/g)) {
         isValid.id = true;
         loginInfo.id = id;
         setErrorMsg((prevState) => {
@@ -136,6 +134,7 @@ const Login = ({ setUserInfo, setIsLoggedIn }) => {
           return { ...prevState, id: "*You cannot use special characters." };
         });
       }
+      // check password
     } else if (e.target.name === "password") {
       if (e.target.value.length > 7) {
         isValid.password = true;
@@ -155,24 +154,22 @@ const Login = ({ setUserInfo, setIsLoggedIn }) => {
         });
       }
     }
-
-    //console.log(errorMsg);
   };
   const navigate = useNavigate();
+
+  // Function to login
   const onBtnClick = () => {
     const db = getDatabase();
     const idRef = query(ref(db, "/users"), orderByChild("id"));
 
     const userRef = query(idRef, equalTo(loginInfo.id));
 
-    // if ID is unique, save account information to database.
-    // if not, show error message.
+    // if there is matching information, set user information and make user to log in.
+    // otherwise, set error message
     onValue(
       userRef,
       (snapshot) => {
-        //console.log("snapshot val", snapshot.val());
         if (snapshot.val()) {
-          //console.log(snapshot.val());
           setUserInfo(snapshot.val()[loginInfo.id]);
           setIsLoggedIn(true);
           navigate("/routine");

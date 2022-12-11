@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Calander from "../components/Calander";
 import Diary from "../components/Diary";
 
-// css for components in MyDiary.js
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
   //width: 100%;
   margin: 0 auto;
@@ -18,16 +18,20 @@ const Wrapper = styled.div`
     align-items: center;
   }
 `;
+// End of styled components
 
+// Function to render user's diary
 const MyDiary = ({ setCurrentTab, userInfo, setUserInfo, isLoggedIn }) => {
   const [date, setDate] = useState(new Date());
 
+  // set current tab to my-diary to change color of my-diary tab.
   useEffect(() => {
     setCurrentTab("my-diary");
-  });
+  }, []);
 
   const navigate = useNavigate();
 
+  // if user is not logged in, go to the main page.
   useEffect(() => {
     if (!isLoggedIn) {
       return navigate("/");

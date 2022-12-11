@@ -4,7 +4,7 @@ import styled from "styled-components";
 import RoutineEditor from "../components/RoutineEditor";
 import RoutineTable from "../components/RoutineTable";
 
-// css for components in Routine.js
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
   margin: 0 auto;
   display: flex;
@@ -22,18 +22,22 @@ const Wrapper = styled.div`
     align-items: center;
   }
 `;
+// End of styled components
 
+// Function to render routine page
 const Routine = ({ setCurrentTab, isLoggedIn, userInfo, setUserInfo }) => {
   const [routineNum, setRoutineNum] = useState("new");
   const [isEdit, setIsEdit] = useState(false);
   const [routineList, setRoutineList] = useState({});
 
+  // set current tab to routine to change color of routine tab.
   useEffect(() => {
     setCurrentTab("routine");
   });
 
   const navigate = useNavigate();
 
+  // if user is not logged in, go to the main page.
   useEffect(() => {
     if (!isLoggedIn) {
       return navigate("/");

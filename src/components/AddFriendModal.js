@@ -14,6 +14,7 @@ import {
   update,
 } from "firebase/database";
 
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
   position: fixed;
   top: 0;
@@ -138,27 +139,33 @@ const RequestBtn = styled.div`
     transform: translateY(2px);
   }
 `;
+// End of styled components
 
+// Function to render modal for adding friends
 const AddFriendModal = ({ setModal, userInfo }) => {
   const [id, setId] = useState("");
   const [friendInfo, setFriendInfo] = useState(null);
   const [isSearched, setIsSearched] = useState(false);
   const [isRequested, setIsRequested] = useState(false);
 
+  // Function to close modal
   const CloseModal = () => {
     setModal(false);
   };
 
+  // Function to enter friend's id
   const onInputChange = (e) => {
     setId(e.target.value);
   };
 
+  // Function to search friend
   const onSearchClick = (e) => {
+    // if user enter user's own id, just return
     if (id === userInfo.id) return;
-    // search friend and set corresponding information
+
+    // query information corresponding to friend id
     const db = getDatabase();
     const idRef = query(ref(db, "/users"), orderByChild("id"));
-
     const userRef = query(idRef, equalTo(id));
 
     onValue(
@@ -166,8 +173,10 @@ const AddFriendModal = ({ setModal, userInfo }) => {
       (snapshot) => {
         console.log("snapshot val", snapshot.val());
         if (snapshot.val()) {
+          // set friend information if there is corresponding information
           setFriendInfo(snapshot.val()[id]);
         } else {
+          // if there is no information, set friend information to null
           setFriendInfo(null);
         }
       },
@@ -180,19 +189,22 @@ const AddFriendModal = ({ setModal, userInfo }) => {
     setIsRequested(false);
   };
 
+  // Function to send friend request
   const onRequestClick = () => {
     const db = getDatabase();
 
+    // save request information to database
     const updates = {};
     updates["/users/" + id + "/friend_requests/" + userInfo.id] =
       userInfo.username;
     console.log(updates);
     update(ref(db), updates);
-    //set(ref(db, "users/" + id + "/friend_requests"), accountInfo);
+
     setIsRequested(true);
   };
 
   return (
+    // components to render
     <Wrapper>
       <Modal>
         <CloseBtn className="material-symbols-outlined" onClick={CloseModal}>

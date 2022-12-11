@@ -14,7 +14,7 @@ import MyCalander from "../components/Calander";
 import FriendList from "../components/FriendList";
 import FriendsDiary from "../components/FriendsDiary";
 
-// css for components in Friends.js
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
   margin: 0 auto;
   display: flex;
@@ -26,9 +26,10 @@ const Wrapper = styled.div`
     align-items: center;
     padding: 80px 5vw;
   }
-  //justify-content: center;
 `;
+// End of styled components
 
+// Function to render Friends page
 const Friends = ({ setCurrentTab, userInfo, setUserInfo, isLoggedIn }) => {
   const [date, setDate] = useState(new Date());
   const [modal, setModal] = useState(false);
@@ -36,10 +37,11 @@ const Friends = ({ setCurrentTab, userInfo, setUserInfo, isLoggedIn }) => {
   useEffect(() => {
     // set current tab to friends to change color of friends tab.
     setCurrentTab("friends");
-  });
+  }, []);
 
   const navigate = useNavigate();
 
+  // if user is not logged in, go to the main page.
   useEffect(() => {
     if (!isLoggedIn) {
       return navigate("/");

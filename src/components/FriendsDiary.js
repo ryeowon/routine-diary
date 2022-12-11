@@ -22,6 +22,7 @@ const Wrapper = styled.div`
   }
 `;
 
+// I used styled components to make easy to use CSS
 const DiaryWrapper = styled.div`
   overflow-y: scroll;
 `;
@@ -90,79 +91,67 @@ const Message = styled.div`
 `;
 
 const FriendName = styled.span`
-  //color: white;
-  //text-decoration: underline;
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 10px;
   padding: 2px 7px 2px 7px;
 `;
+// End of styled components
 
 const FriendsDiary = ({ date, userInfo }) => {
   const [dateLabel, setDateLabel] = useState("");
-  const [contents, setContents] = useState("");
   const [diaryList, setDiaryList] = useState({});
   const [diaryComponent, setDiaryComponent] = useState(<></>);
   const [IsdiaryExist, setIsDiaryExist] = useState(false);
 
+  // convert time to Korean time and set date
   useEffect(() => {
     let offset = date.getTimezoneOffset() * 60000;
     let dateOffset = new Date(date.getTime() - offset);
     setDateLabel(dateOffset.toISOString().substring(0, 10));
   }, [date]);
 
+  // load friends' diary list at specific date.
   useEffect(() => {
     if (!userInfo.friends) return;
 
     let friend_list = Object.keys(userInfo.friends);
 
-    console.log(friend_list);
-
+    // query friend's diary
     const db = getDatabase();
     const idRef = query(ref(db, "/users"), orderByChild("id"));
 
     let temp_list = {};
     setIsDiaryExist(false);
-    //setDiaryList({});
 
     friend_list.forEach((friend_id, idx) => {
       const userRef = query(idRef, equalTo(friend_id));
       onValue(
         userRef,
         (snapshot) => {
-          //console.log("FriendsDiary.js", snapshot.val());
           let diaryInfo = snapshot.val()[friend_id].diary[dateLabel];
-          //console.log(friend_id, diaryInfo);
+          console.log("a", friend_id, diaryInfo);
           if (diaryInfo) {
-            temp_list[friend_id] = diaryInfo;
-
-            console.log("templist", temp_list);
-
-            if (idx + 1 === Object.entries(userInfo.friends).length) {
-              setDiaryList((prev) => temp_list);
-            }
+            // set diary list
+            setDiaryList((prev) => {
+              temp_list[friend_id] = diaryInfo;
+              return temp_list;
+            });
           }
         },
         {
           onlyOnce: true,
         }
       );
-      //console.log(Object.values(diaryList).length);
     });
-
-    //setDiaryList((prev) => temp_list);
-    console.log("diaryList", diaryList);
   }, [userInfo, dateLabel]);
 
   useEffect(() => {
-    //console.log("value", Object.values(diaryList).length);
-    //console.log("useEffect", diaryList);
-    //console.log("useEffect", Object.entries(diaryList).length);
+    // if there are diaries, render them.
     if (Object.entries(diaryList).length) {
       setIsDiaryExist(true);
-      const component = Object.entries(diaryList).map((diaryInfo) => {
-        //console.log("info", diaryInfo);
+      const component = Object.entries(diaryList).map((diaryInfo, idx) => {
         return (
-          <DiaryContainer>
+          <DiaryContainer key={"d" + idx}>
             <SelectedDate>
               <label>
                 <FriendName>{userInfo.friends[diaryInfo[0]]}</FriendName>'s
@@ -176,11 +165,8 @@ const FriendsDiary = ({ date, userInfo }) => {
       });
 
       setDiaryComponent(component);
-    } else {
     }
   }, [diaryList]);
-
-  //console.log("length", )
 
   return (
     <Wrapper>

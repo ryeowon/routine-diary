@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
   margin-left: 2vw;
 `;
@@ -107,6 +108,7 @@ const SubTitle = styled.div`
   font-weight: 600;
   margin-bottom: 3px;
 `;
+// End of styled components
 
 const FriendList = ({ setModal, userInfo, setUserInfo }) => {
   const [friendInfo, setFriendInfo] = useState(false);
@@ -115,10 +117,12 @@ const FriendList = ({ setModal, userInfo, setUserInfo }) => {
   const [RequestComponent, setRequestComponent] = useState(<></>);
   const [friendComponent, setFriendComponent] = useState(<></>);
 
+  // Function to show modal
   const showModal = () => {
     setModal(true);
   };
 
+  // Function to confirm friend's request
   const onConfirm = (friend_id, friend_name) => {
     const db = getDatabase();
 
@@ -139,7 +143,6 @@ const FriendList = ({ setModal, userInfo, setUserInfo }) => {
     const idRef = query(ref(db, "/users"), orderByChild("id"));
     let id = userInfo.id;
     const userRef = query(idRef, equalTo(id));
-
     onValue(
       userRef,
       (snapshot) => {
@@ -154,10 +157,9 @@ const FriendList = ({ setModal, userInfo, setUserInfo }) => {
         onlyOnce: true,
       }
     );
-
-    console.log("confirm");
   };
 
+  // Function to reject friend's request
   const onReject = (friend_id) => {
     const db = getDatabase();
 
@@ -171,7 +173,6 @@ const FriendList = ({ setModal, userInfo, setUserInfo }) => {
     const idRef = query(ref(db, "/users"), orderByChild("id"));
     let id = userInfo.id;
     const userRef = query(idRef, equalTo(id));
-
     onValue(
       userRef,
       (snapshot) => {
@@ -186,23 +187,20 @@ const FriendList = ({ setModal, userInfo, setUserInfo }) => {
         onlyOnce: true,
       }
     );
-
-    console.log("reject");
   };
 
+  // Function to remove friend
   const onRemove = (friend_id) => {
     const db = getDatabase();
 
     // delete the friend.
     set(ref(db, "users/" + userInfo.id + "/friends/" + friend_id), null);
-
     set(ref(db, "users/" + friend_id + "/friends/" + userInfo.id), null);
 
     // load user information again.
     const idRef = query(ref(db, "/users"), orderByChild("id"));
     let id = userInfo.id;
     const userRef = query(idRef, equalTo(id));
-
     onValue(
       userRef,
       (snapshot) => {
@@ -222,8 +220,8 @@ const FriendList = ({ setModal, userInfo, setUserInfo }) => {
   useEffect(() => {
     // whenever user information is updated, render friend requests and friend list.
     let friend_requests = userInfo.friend_requests;
-    console.log(friend_requests);
 
+    // if there are friend_requests, render friend_requests
     if (friend_requests) {
       setFriendRequest(true);
       const component = Object.entries(friend_requests).map(
@@ -244,21 +242,20 @@ const FriendList = ({ setModal, userInfo, setUserInfo }) => {
           );
         }
       );
-
       setRequestComponent(component);
     } else {
       setFriendRequest(false);
     }
 
     let friend_list = userInfo.friends;
-    console.log(friend_list);
 
+    // if there are friends, render friend list
     if (friend_list) {
       setFriendInfo(true);
 
       const component = Object.entries(friend_list).map((friend_info, idx) => {
         return (
-          <Friend>
+          <Friend key={"f" + idx}>
             <span className="material-symbols-outlined">person</span>
             {friend_info[1]}
             <RemoveBtn onClick={() => onRemove(friend_info[0])}>
@@ -269,8 +266,6 @@ const FriendList = ({ setModal, userInfo, setUserInfo }) => {
       });
 
       setFriendComponent(component);
-
-      /* */
     }
   }, [userInfo]);
 

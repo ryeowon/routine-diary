@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
   position: fixed;
   top: 0;
@@ -147,7 +148,9 @@ const Greeting = styled.span`
     display: none;
   }
 `;
+// End of styled components
 
+// Function to render a header on the top
 const Header = ({ isLoggedIn, setIsLoggedIn, userInfo, currentTab }) => {
   const [isActive, setIsActive] = useState({
     routine: true,
@@ -155,6 +158,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, userInfo, currentTab }) => {
     friends: false,
   });
 
+  // set current tab's color to pink
   useEffect(() => {
     if (currentTab === "routine")
       setIsActive({ routine: true, diary: false, friends: false });
@@ -178,6 +182,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, userInfo, currentTab }) => {
         </Title>
       )}
 
+      {/* user have to log in to see the menus (tabs) */}
       {isLoggedIn ? (
         <CenterComponent>
           <Tab to="/routine" active={isActive.routine}>
@@ -195,7 +200,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, userInfo, currentTab }) => {
       ) : (
         <></>
       )}
-
+      {/* if user is logged in, show greeting message and log out button. Otherwise, show log in and register buttons. */}
       {isLoggedIn ? (
         <RightComponent>
           <Greeting>

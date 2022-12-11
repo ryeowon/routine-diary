@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useNavigation } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 
-// styled components for Home.js
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div``;
 
 const MainSection = styled.section`
@@ -191,7 +191,9 @@ const LoginBtn = styled.button`
     transform: translateY(2px);
   }
 `;
+// End of styled components
 
+// Function to render home page
 const Home = () => {
   const navigate = useNavigate();
 

@@ -15,10 +15,9 @@ import {
   update,
 } from "firebase/database";
 
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
-  //width: 30vw;
   margin-left: 100px;
-  //min-width: 700px;
 
   @media only screen and (max-width: 768px) {
     margin: 30px 0;
@@ -77,15 +76,6 @@ const TextArea = styled.textarea`
   }
 `;
 
-const AchievementRate = styled.div`
-  background-color: ${(props) => props.theme.light1};
-  padding: 7px;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  border: 1px solid black;
-  font-weight: 600;
-`;
-
 const SaveBtn = styled.button`
   margin: 20px auto;
   display: block;
@@ -110,28 +100,28 @@ const SaveBtn = styled.button`
     transform: translateY(3px);
   }
 `;
+// End of styled components
 
 const Diary = ({ date, userInfo, setUserInfo }) => {
   const [dateLabel, setDateLabel] = useState("");
-  const [contents, setContents] = useState("");
   const [diaryInfo, setDiaryInfo] = useState("");
-  const [diaryComponent, setDiaryComponent] = useState(<></>);
   const [diaryContent, setDiaryContent] = useState();
 
+  // convert time to Korean time and set date
   useEffect(() => {
     let offset = date.getTimezoneOffset() * 60000;
     let dateOffset = new Date(date.getTime() - offset);
     setDateLabel(dateOffset.toISOString().substring(0, 10));
   }, [date]);
 
+  // whenever user information or date is changed, set diary information.
   useEffect(() => {
     if (userInfo.diary) {
       setDiaryInfo(userInfo.diary[dateLabel]);
-      //console.log(dateLabel);
-      //console.log(userInfo.diary[dateLabel]);
     }
   }, [userInfo, dateLabel]);
 
+  // Function to save diary
   const SaveDiary = () => {
     const db = getDatabase();
 
@@ -145,7 +135,6 @@ const Diary = ({ date, userInfo, setUserInfo }) => {
     const idRef = query(ref(db, "/users"), orderByChild("id"));
     let id = userInfo.id;
     const userRef = query(idRef, equalTo(id));
-
     onValue(
       userRef,
       (snapshot) => {
@@ -162,6 +151,7 @@ const Diary = ({ date, userInfo, setUserInfo }) => {
     );
   };
 
+  // Function to enter a diary
   const onChange = (e) => {
     setDiaryContent(e.target.value);
   };

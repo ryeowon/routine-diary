@@ -3,6 +3,7 @@ import { Calendar } from "react-calendar";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+// I used styled components to make easy to use CSS
 const CalendarContainer = styled.div`
   .react-calendar {
     width: 300px;
@@ -44,7 +45,9 @@ const CalendarContainer = styled.div`
     box-shadow: ${(props) => props.theme.small_shadow};
   }
 `;
+// End of styled components
 
+// Function to render a calander
 const MyCalander = ({ date, setDate }) => {
   return (
     <CalendarContainer>

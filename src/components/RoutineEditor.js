@@ -15,6 +15,7 @@ import {
   get,
 } from "firebase/database";
 
+// I used styled components to make easy to use CSS
 const Wrapper = styled.div`
   min-width: 300px;
   width: 25vw;
@@ -130,7 +131,9 @@ const CancelBtn = styled.div`
   top: 5px;
   cursor: pointer;
 `;
+// End of styled components
 
+// Function to render routine editor
 const RoutineEditor = ({
   routineNum,
   userInfo,
@@ -139,6 +142,7 @@ const RoutineEditor = ({
   setIsEdit,
   date,
 }) => {
+  // save a routine information to state
   const [routineInfo, setRoutineInfo] = useState({
     cycle: {
       mon: false,
@@ -154,6 +158,7 @@ const RoutineEditor = ({
     participants: {},
   });
 
+  // routine cycle and participants components
   const [cycleComponent, setCycleComponent] = useState(
     <CycleContainer>
       <Box active={routineInfo.cycle.mon} onClick={() => onCycleClick("mon")}>
@@ -181,8 +186,9 @@ const RoutineEditor = ({
   );
   const [participantsComponent, setParticipantsComponent] = useState(<></>);
 
+  // whenever routine number is changed, set routine information again.
   useEffect(() => {
-    console.log("editor", routineList);
+    // when user is adding new routine, initialize routine information.
     if (routineNum === "new") {
       setRoutineInfo((prev) => {
         let temp_info = {
@@ -203,20 +209,13 @@ const RoutineEditor = ({
         };
         return temp_info;
       });
-      console.log("new");
-
-      //setRoutineInfo();
     } else {
-      console.log("routine list", routineList);
+      // when user is modifing a routine, set routine information to corresponding data.
       setRoutineInfo((prev) => routineList[routineNum]);
     }
   }, [routineNum]);
 
-  useEffect(() => {
-    if (routineNum === "new") {
-    }
-  }, [routineNum]);
-
+  // whenever routine information is changed, render cycle component and participants component again.
   useEffect(() => {
     setCycleComponent(
       <CycleContainer>
@@ -245,21 +244,26 @@ const RoutineEditor = ({
     );
 
     if (!userInfo.friends) return;
-    const component = Object.entries(userInfo.friends).map((friendInfo) => {
-      //console.log(friendInfo);
-      return (
-        <ParticipantContainer onClick={() => onParticipantClick(friendInfo[0])}>
-          <Box active={routineInfo.participants[friendInfo[0]]}>
-            <span className="material-symbols-outlined">person</span>
-          </Box>
-          <PersonName>{friendInfo[1]}</PersonName>
-        </ParticipantContainer>
-      );
-    });
+    const component = Object.entries(userInfo.friends).map(
+      (friendInfo, idx) => {
+        return (
+          <ParticipantContainer
+            key={"pp" + idx}
+            onClick={() => onParticipantClick(friendInfo[0])}
+          >
+            <Box active={routineInfo.participants[friendInfo[0]]}>
+              <span className="material-symbols-outlined">person</span>
+            </Box>
+            <PersonName>{friendInfo[1]}</PersonName>
+          </ParticipantContainer>
+        );
+      }
+    );
 
     setParticipantsComponent(component);
   }, [routineInfo]);
 
+  // Function to change routine cycle
   const onCycleClick = (day) => {
     // update routine cycle
     let temp_info = routineInfo.cycle;
@@ -271,6 +275,7 @@ const RoutineEditor = ({
     });
   };
 
+  // Function to change participants
   const onParticipantClick = (friend_id) => {
     // update participants
     let temp_info = routineInfo.participants;
@@ -285,23 +290,24 @@ const RoutineEditor = ({
       };
     }
 
-    //console.log("it's me..", temp_info);
-
     setRoutineInfo({
       ...routineInfo,
       participants: temp_info,
     });
   };
 
+  // Function to change name of the routine
   const onChange = (e) => {
     setRoutineInfo({ ...routineInfo, name: e.target.value });
   };
 
+  // Functino to save routine to database
   const SaveNewRoutine = () => {
     const db = getDatabase();
     const CountRef = ref(db, "routines/count");
     let count = 0;
 
+    // get new routine id and save routine information to database.
     get(CountRef)
       .then((snapshot) => {
         if (snapshot.exists()) {
@@ -309,7 +315,6 @@ const RoutineEditor = ({
 
           const updates = {};
           console.log(userInfo.username);
-          //routineInfo.participants[userInfo.id].username = userInfo.username;
           updates["/routines/" + count] = routineInfo;
           updates["/routines/count"] = count;
 
@@ -320,11 +325,9 @@ const RoutineEditor = ({
             updates["/users/" + id + "/routines/" + count] = count;
           });
 
-          console.log(updates);
-
           update(ref(db), updates)
             .then(() => {
-              // load user's information again.
+              // after update database, load user's information again.
               let id = userInfo.id;
               const idRef = query(ref(db, "/users"), orderByChild("id"));
               const userRef = query(idRef, equalTo(id));
@@ -346,8 +349,6 @@ const RoutineEditor = ({
             })
             .catch((error) => {});
           console.log(updates);
-
-          /**/
         } else {
           console.log("No data available");
         }
@@ -355,21 +356,23 @@ const RoutineEditor = ({
       .catch((error) => {
         console.error(error);
       });
-    //update(ref(db), updates);
   };
 
+  // Function to stop routine
   const DeleteRoutine = () => {
     const db = getDatabase();
 
     let participants = routineInfo.participants;
     delete participants[userInfo.id];
 
+    // update user's routine list and participants of the routine.
     const updates = {};
     updates["users/" + userInfo.id + "/routines/" + routineNum] = null;
     updates["routines/" + routineNum + "/participants"] = participants;
 
     console.log(updates);
 
+    // update database
     update(ref(db), updates)
       .then(() => {
         // load user's information again.
@@ -393,37 +396,32 @@ const RoutineEditor = ({
         );
       })
       .catch((error) => {});
-
-    //console.log("delete!");
   };
 
+  // Function to edit routine
   const EditRoutine = () => {
     const db = getDatabase();
 
     const updates = {};
-    //console.log(userInfo.username);
-    //routineInfo.participants[userInfo.id].username = userInfo.username;
 
+    // change participants' routine list
     Object.keys(routineInfo.participants).forEach((id) => {
-      console.log("id", id);
       updates["/users/" + id + "/routines/" + routineNum] = routineNum;
     });
 
+    // change routine information
     updates["/routines/" + routineNum] = routineInfo;
 
-    console.log(updates);
-
+    // update database
     update(ref(db), updates)
       .then(() => {
         // load user's information again.
         let id = userInfo.id;
         const idRef = query(ref(db, "/users"), orderByChild("id"));
         const userRef = query(idRef, equalTo(id));
-
         onValue(
           userRef,
           (snapshot) => {
-            console.log("edit", snapshot.val());
             if (snapshot.val()) {
               setUserInfo(snapshot.val()[id]);
             } else {
@@ -449,7 +447,7 @@ const RoutineEditor = ({
 
         <Container>
           <CancelBtn onClick={() => setIsEdit(false)}>
-            <span class="material-symbols-outlined">close</span>
+            <span className="material-symbols-outlined">close</span>
           </CancelBtn>
           <InputWrapper>
             <Label>Routine Name</Label>
