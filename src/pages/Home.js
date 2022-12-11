@@ -153,7 +153,6 @@ const RegisterBtn = styled.button`
   min-width: 200px;
   padding: 10px 0;
   margin: 60px 1vw;
-  //display: block;
   opacity: 0.9;
   font-weight: 600;
   background-color: ${(props) => props.theme.dark1};
@@ -232,7 +231,7 @@ const Home = () => {
         <Diaries src="./diaries.png" />
         <Explanation>
           <h1>Share Diary with Friends.</h1>
-          <p>Share your day and feelings with your friends </p>
+          <p>Share your day and feelings with your friends.</p>
         </Explanation>
       </Introduce>
       <LastSection>

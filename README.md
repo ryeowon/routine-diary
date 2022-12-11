@@ -22,4 +22,4 @@ You may also see any lint errors in the console.
 
 ## Deployment
 
-URl: [http://3.34.143.5/](http://3.34.143.5/){:target="\_blank"}
+URL: [http://3.34.143.5/](http://3.34.143.5/)
